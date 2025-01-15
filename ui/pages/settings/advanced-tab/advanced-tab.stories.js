@@ -9,27 +9,28 @@ export default {
     warning: { control: 'text' },
     useNonceField: { control: 'boolean' },
     sendHexData: { control: 'boolean' },
-    advancedInlineGas: { control: 'boolean' },
     showFiatInTestnets: { control: 'boolean' },
     useLedgerLive: { control: 'boolean' },
     dismissSeedBackUpReminder: { control: 'boolean' },
+    overrideContentSecurityPolicyHeader: { control: 'boolean' },
     setAutoLockTimeLimit: { action: 'setAutoLockTimeLimit' },
     setShowFiatConversionOnTestnetsPreference: {
       action: 'setShowFiatConversionOnTestnetsPreference',
     },
     setShowTestNetworks: { action: 'setShowTestNetworks' },
     setIpfsGateway: { action: 'setIpfsGateway' },
-    setLedgerTransportPreference: { action: 'setLedgerTransportPreference' },
+    setIsIpfsGatewayEnabled: { action: 'setIsIpfsGatewayEnabled' },
     setDismissSeedBackUpReminder: { action: 'setDismissSeedBackUpReminder' },
+    setOverrideContentSecurityPolicyHeader: {
+      action: 'setOverrideContentSecurityPolicyHeader',
+    },
     setUseNonceField: { action: 'setUseNonceField' },
     setHexDataFeatureFlag: { action: 'setHexDataFeatureFlag' },
-    displayWarning: { action: 'displayWarning' },
+    displayErrorInSettings: { action: 'displayErrorInSettings' },
+    hideErrorInSettings: { action: 'hideErrorInSettings' },
     history: { action: 'history' },
     showResetAccountConfirmationModal: {
       action: 'showResetAccountConfirmationModal',
-    },
-    setAdvancedInlineGasFeatureFlag: {
-      action: 'setAdvancedInlineGasFeatureFlag',
     },
   },
 };
@@ -39,9 +40,9 @@ export const DefaultStory = (args) => {
     {
       useNonceField,
       sendHexData,
-      advancedInlineGas,
       showFiatInTestnets,
       dismissSeedBackUpReminder,
+      overrideContentSecurityPolicyHeader,
     },
     updateArgs,
   ] = useArgs();
@@ -58,12 +59,6 @@ export const DefaultStory = (args) => {
     });
   };
 
-  const handleAdvancedInlineGas = () => {
-    updateArgs({
-      advancedInlineGas: !advancedInlineGas,
-    });
-  };
-
   const handleShowFiatInTestnets = () => {
     updateArgs({
       showFiatInTestnets: !showFiatInTestnets,
@@ -75,6 +70,12 @@ export const DefaultStory = (args) => {
       dismissSeedBackUpReminder: !dismissSeedBackUpReminder,
     });
   };
+
+  const handleOverrideContentSecurityPolicyHeader = () => {
+    updateArgs({
+      overrideContentSecurityPolicyHeader: !overrideContentSecurityPolicyHeader,
+    });
+  };
   return (
     <div style={{ flex: 1, height: 500 }}>
       <AdvancedTab
@@ -83,12 +84,16 @@ export const DefaultStory = (args) => {
         setUseNonceField={handleUseNonceField}
         sendHexData={sendHexData}
         setHexDataFeatureFlag={handleSendHexData}
-        advancedInlineGas={advancedInlineGas}
-        setAdvancedInlineGasFeatureFlag={handleAdvancedInlineGas}
         showFiatInTestnets={showFiatInTestnets}
         setShowFiatConversionOnTestnetsPreference={handleShowFiatInTestnets}
         dismissSeedBackUpReminder={dismissSeedBackUpReminder}
         setDismissSeedBackUpReminder={handleDismissSeedBackUpReminder}
+        overrideContentSecurityPolicyHeader={
+          overrideContentSecurityPolicyHeader
+        }
+        setOverrideContentSecurityPolicyHeader={
+          handleOverrideContentSecurityPolicyHeader
+        }
         ipfsGateway="ipfs-gateway"
       />
     </div>
@@ -100,8 +105,8 @@ DefaultStory.args = {
   warning: 'Warning Sample',
   useNonceField: false,
   sendHexData: false,
-  advancedInlineGas: false,
   showFiatInTestnets: false,
   useLedgerLive: false,
   dismissSeedBackUpReminder: false,
+  overrideContentSecurityPolicyHeader: true,
 };

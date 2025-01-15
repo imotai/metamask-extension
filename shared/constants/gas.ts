@@ -55,6 +55,7 @@ export enum PriorityLevels {
   high = 'high',
   custom = 'custom',
   dAppSuggested = 'dappSuggested',
+  dappSuggestedHigh = 'dappSuggestedHigh',
 }
 
 /**
@@ -81,10 +82,10 @@ export enum EditGasModes {
 export enum NetworkCongestionThresholds {
   notBusy = 0,
   stable = 0.33,
-  busy = 0.66,
+  busy = 0.9,
 }
 
-export interface TxGasFees {
+export type TxGasFees = {
   /** Maxmimum number of units of gas to use for this transaction. */
   gasLimit: string;
   /** Price per gas for legacy txs */
@@ -110,4 +111,4 @@ export interface TxGasFees {
   userEditedGasLimit: string;
   /** Estimate level user selected. */
   userFeeLevel: string;
-}
+};

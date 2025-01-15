@@ -75,9 +75,6 @@
   "asset": {
     "message": "Ressurs"
   },
-  "attemptingConnect": {
-    "message": "Prøver å opprette forbindelse med blokkjede"
-  },
   "attributions": {
     "message": "Henvisninger"
   },
@@ -92,9 +89,6 @@
   },
   "back": {
     "message": "Tilbake"
-  },
-  "backToAll": {
-    "message": "Tilbake til alt"
   },
   "backupApprovalInfo": {
     "message": "Denne hemmelige koden behøves for å gjenopprette lommeboken din i tilfelle du mister enheten din, glemmer passordet ditt, trenger å re-installere MetaMask, eller ønsker å få tilgang til lommeboken din på en annen enhet."
@@ -151,14 +145,14 @@
   "connect": {
     "message": "Koble til"
   },
-  "connectHardwareWallet": {
-    "message": "Koble til maskinvarelommebok"
-  },
   "connectingTo": {
     "message": "Forbinder til $1 "
   },
   "connectingToGoerli": {
     "message": "Oppretter forbindelse med Goerli Test Network"
+  },
+  "connectingToLineaGoerli": {
+    "message": "Oppretter forbindelse med Linea Goerli Test Network"
   },
   "connectingToMainnet": {
     "message": "Forbinder med hoved-Ethereumnettverk "
@@ -175,9 +169,6 @@
   "copyAddress": {
     "message": "Kopier adresse til  utklippstavlen "
   },
-  "copyPrivateKey": {
-    "message": "Dette er din private nøkkel (klikk for å kopiere)"
-  },
   "copyToClipboard": {
     "message": "Kopiér til utklippstavlen"
   },
@@ -186,9 +177,6 @@
   },
   "create": {
     "message": "Opprett"
-  },
-  "createAccount": {
-    "message": "Opprett konto"
   },
   "createPassword": {
     "message": "Opprett passord "
@@ -214,15 +202,6 @@
   "delete": {
     "message": "Slett"
   },
-  "deleteAccount": {
-    "message": "Slett konto "
-  },
-  "deleteNetwork": {
-    "message": "Slette nettverk? "
-  },
-  "deleteNetworkDescription": {
-    "message": "Er du sikker på at du vil slette dette nettverket?"
-  },
   "details": {
     "message": "Detaljer"
   },
@@ -244,15 +223,6 @@
   "editContact": {
     "message": "Rediger kontakt"
   },
-  "ensNotFoundOnCurrentNetwork": {
-    "message": "ENS-navn ikke funnet i det gjeldende nettverket. Prøv å bytte til hovednettverket for Ethereum."
-  },
-  "ensRegistrationError": {
-    "message": "Feil i ENS-navneregistrering"
-  },
-  "enterPassword": {
-    "message": "Skriv inn passord "
-  },
   "enterPasswordContinue": {
     "message": "Skriv inn passord for å fortsette"
   },
@@ -264,9 +234,6 @@
   },
   "expandView": {
     "message": "Utvid visning"
-  },
-  "exportPrivateKey": {
-    "message": "Eksporter privat nøkkel"
   },
   "failed": {
     "message": "Mislyktes"
@@ -368,12 +335,6 @@
   "invalidAddressRecipient": {
     "message": "Mottaksadresse er ugyldig "
   },
-  "invalidAddressRecipientNotEthNetwork": {
-    "message": "Ikke ETH-nettverk, bruk små bokstaver"
-  },
-  "invalidBlockExplorerURL": {
-    "message": "Ugyldig Block Explorer URL"
-  },
   "invalidRPC": {
     "message": "Ugyldig RPC URL"
   },
@@ -435,9 +396,6 @@
   "mustSelectOne": {
     "message": "Må velge minst 1 token. "
   },
-  "myAccounts": {
-    "message": "Mine kontoer "
-  },
   "needImportFile": {
     "message": "Du må velge en fil å importere.",
     "description": "User is important an account and needs to add a file to continue"
@@ -472,9 +430,6 @@
   },
   "next": {
     "message": "Neste"
-  },
-  "noAddressForName": {
-    "message": "Ingen adresse har blitt angitt for dette navnet. "
   },
   "noConversionRateAvailable": {
     "message": "Ingen konverteringsrate tilgjengelig "
@@ -537,12 +492,6 @@
   "prev": {
     "message": "Tidligere"
   },
-  "primaryCurrencySetting": {
-    "message": "Hovedvaluta "
-  },
-  "primaryCurrencySettingDescription": {
-    "message": "Velg nasjonal for å prioritere å vise verdier i nasjonal valuta i kjeden (f.eks. ETH). Velg Fiat for å prioritere visning av verdier i den valgte fiat-valutaen."
-  },
   "privacyMsg": {
     "message": "Personvernerklæring"
   },
@@ -556,17 +505,8 @@
   "privateNetwork": {
     "message": "Privat nettverk "
   },
-  "queue": {
-    "message": "Kø"
-  },
   "readdToken": {
     "message": "Du kan legge til dette tokenet igjen i fremtiden ved å gå til \"Legg til token\" i menyen for kontoalternativer."
-  },
-  "recents": {
-    "message": "Nylige"
-  },
-  "recipientAddressPlaceholder": {
-    "message": "Søk, offentlig adresse (0x) eller ENS"
   },
   "reject": {
     "message": "Avslå"
@@ -626,12 +566,6 @@
   "search": {
     "message": "Søk"
   },
-  "searchResults": {
-    "message": "Søkeresultater"
-  },
-  "searchTokens": {
-    "message": "Søk i sjetonger"
-  },
   "securityAndPrivacy": {
     "message": "Sikkerhet og personvern"
   },
@@ -650,17 +584,8 @@
   "selectType": {
     "message": "Velg type "
   },
-  "sendTokens": {
-    "message": "Send tokener"
-  },
   "settings": {
     "message": "Innstillinger"
-  },
-  "showAdvancedGasInline": {
-    "message": "Avanserte datakraftskontroller"
-  },
-  "showAdvancedGasInlineDescription": {
-    "message": "Velg dette for å vise bensinpris og begrensningskontroller direkte på send- og bekreftskjermbildene."
   },
   "showFiatConversionInTestnets": {
     "message": "Vis konvertering på Testnets "
@@ -673,9 +598,6 @@
   },
   "showHexDataDescription": {
     "message": "Velg dette for å vise hex-datafeltet på sendskjermen"
-  },
-  "showPrivateKeys": {
-    "message": "Vis private nøkler"
   },
   "sigRequest": {
     "message": "Signaturforespørsel "
@@ -721,27 +643,6 @@
   },
   "symbolBetweenZeroTwelve": {
     "message": "Symbolet må være 11 tegn eller færre."
-  },
-  "syncWithMobile": {
-    "message": "Synkroniser med mobil "
-  },
-  "syncWithMobileBeCareful": {
-    "message": "Pass på at ingen andre ser på skjermen din mens du skanner denne koden "
-  },
-  "syncWithMobileComplete": {
-    "message": "Dataene dine er blitt synkronisert med suksess. Kos deg med mobilappen for MetaMask!"
-  },
-  "syncWithMobileDesc": {
-    "message": "Du kan synkronisere kontoene og informasjonen din med den mobile enheten din. Åpne mobilappen for MetaMask, gå til \"Innstillinger\" og trykk på \"Synkronisering fra nettleserutvidelse\""
-  },
-  "syncWithMobileDescNewUsers": {
-    "message": "Hvis du åpner mobilappen for MetaMask for første gang, følger du bare trinnene på telefonen."
-  },
-  "syncWithMobileScanThisCode": {
-    "message": "Skann denne koden med din mobilapp for MetaMask"
-  },
-  "syncWithMobileTitle": {
-    "message": "Synkronisér med mobil"
   },
   "terms": {
     "message": "Brukervilkår"
@@ -806,21 +707,11 @@
   "transfer": {
     "message": "Overfør"
   },
-  "transferBetweenAccounts": {
-    "message": "Overfør mellom kontoene mine"
-  },
   "transferFrom": {
     "message": "Overfør fra"
   },
-  "troubleTokenBalances": {
-    "message": "Vi hadde problemer med å laste inn sjetongsaldoen din. Du kan se dem",
-    "description": "Followed by a link (here) to view token balances"
-  },
   "tryAgain": {
     "message": "Prøv igjen"
-  },
-  "typePassword": {
-    "message": "Skriv inn MetaMask-passordet"
   },
   "unapproved": {
     "message": "Ikke godkjent "
@@ -830,12 +721,6 @@
   },
   "unknown": {
     "message": "Ukjent"
-  },
-  "unknownCameraError": {
-    "message": "Det oppsto en feil under forsøket på å få tilgang til kameraet ditt. Vær så snill og prøv på nytt..."
-  },
-  "unknownCameraErrorTitle": {
-    "message": "Oisann! Noe gikk galt.... "
   },
   "unknownNetwork": {
     "message": "Ukjent privat nettverk"
@@ -848,9 +733,6 @@
   },
   "unlockMessage": {
     "message": "Det desentraliserte internett venter deg"
-  },
-  "updatedWithDate": {
-    "message": "Oppdatert $1"
   },
   "urlErrorMsg": {
     "message": "URI-er krever det aktuelle HTTP/HTTPS-prefikset."

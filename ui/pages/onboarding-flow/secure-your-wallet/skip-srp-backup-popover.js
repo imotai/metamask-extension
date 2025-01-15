@@ -6,25 +6,27 @@ import { useI18nContext } from '../../../hooks/useI18nContext';
 import Button from '../../../components/ui/button';
 import Popover from '../../../components/ui/popover';
 import Box from '../../../components/ui/box';
-import Typography from '../../../components/ui/typography';
+import {
+  Text,
+  Icon,
+  IconName,
+  IconSize,
+} from '../../../components/component-library';
 import {
   AlignItems,
   IconColor,
   FLEX_DIRECTION,
-  FONT_WEIGHT,
   JustifyContent,
-  TypographyVariant,
+  TextVariant,
 } from '../../../helpers/constants/design-system';
 import { setSeedPhraseBackedUp } from '../../../store/actions';
 import Checkbox from '../../../components/ui/check-box';
 import { ONBOARDING_COMPLETION_ROUTE } from '../../../helpers/constants/routes';
-import { EVENT_NAMES, EVENT } from '../../../../shared/constants/metametrics';
-import { MetaMetricsContext } from '../../../contexts/metametrics';
 import {
-  Icon,
-  ICON_NAMES,
-  ICON_SIZES,
-} from '../../../components/component-library';
+  MetaMetricsEventCategory,
+  MetaMetricsEventName,
+} from '../../../../shared/constants/metametrics';
+import { MetaMetricsContext } from '../../../contexts/metametrics';
 
 export default function SkipSRPBackup({ handleClose }) {
   const [checked, setChecked] = useState(false);
@@ -45,8 +47,9 @@ export default function SkipSRPBackup({ handleClose }) {
           <Button
             onClick={() => {
               trackEvent({
-                category: EVENT.CATEGORIES.ONBOARDING,
-                event: EVENT_NAMES.ONBOARDING_WALLET_SECURITY_SKIP_CANCELED,
+                category: MetaMetricsEventCategory.Onboarding,
+                event:
+                  MetaMetricsEventName.OnboardingWalletSecuritySkipCanceled,
               });
               handleClose();
             }}
@@ -63,8 +66,9 @@ export default function SkipSRPBackup({ handleClose }) {
             onClick={async () => {
               await dispatch(setSeedPhraseBackedUp(false));
               trackEvent({
-                category: EVENT.CATEGORIES.ONBOARDING,
-                event: EVENT_NAMES.ONBOARDING_WALLET_SECURITY_SKIP_CONFIRMED,
+                category: MetaMetricsEventCategory.Onboarding,
+                event:
+                  MetaMetricsEventName.OnboardingWalletSecuritySkipConfirmed,
               });
               history.push(ONBOARDING_COMPLETION_ROUTE);
             }}
@@ -81,17 +85,12 @@ export default function SkipSRPBackup({ handleClose }) {
         margin={4}
       >
         <Icon
-          name={ICON_NAMES.DANGER}
-          size={ICON_SIZES.XL}
+          name={IconName.Danger}
+          size={IconSize.Xl}
           className="skip-srp-backup-popover__icon"
           color={IconColor.errorDefault}
         />
-        <Typography
-          variant={TypographyVariant.h3}
-          fontWeight={FONT_WEIGHT.BOLD}
-        >
-          {t('skipAccountSecurity')}
-        </Typography>
+        <Text variant={TextVariant.headingMd}>{t('skipAccountSecurity')}</Text>
         <Box justifyContent={JustifyContent.center} margin={3}>
           <label className="skip-srp-backup-popover__label">
             <Checkbox
@@ -100,12 +99,9 @@ export default function SkipSRPBackup({ handleClose }) {
               checked={checked}
               dataTestId="skip-srp-backup-popover-checkbox"
             />
-            <Typography
-              className="skip-srp-backup-popover__details"
-              variant={TypographyVariant.h7}
-            >
+            <Text className="skip-srp-backup-popover__details">
               {t('skipAccountSecurityDetails')}
-            </Typography>
+            </Text>
           </label>
         </Box>
       </Box>

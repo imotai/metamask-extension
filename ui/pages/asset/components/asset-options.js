@@ -7,13 +7,16 @@ import { I18nContext } from '../../../contexts/i18n';
 import { Menu, MenuItem } from '../../../components/ui/menu';
 import { getBlockExplorerLinkText } from '../../../selectors';
 import { NETWORKS_ROUTE } from '../../../helpers/constants/routes';
-import { ButtonIcon, ICON_NAMES } from '../../../components/component-library';
+import {
+  ButtonIcon,
+  ButtonIconSize,
+  IconName,
+} from '../../../components/component-library';
 import { Color } from '../../../helpers/constants/design-system';
 
 const AssetOptions = ({
   onRemove,
   onClickBlockExplorer,
-  onViewAccountDetails,
   onViewTokenDetails,
   tokenSymbol,
   isNativeAsset,
@@ -40,8 +43,9 @@ const AssetOptions = ({
         data-testid="asset-options__button"
         onClick={() => setAssetOptionsOpen(true)}
         ariaLabel={t('assetOptions')}
-        iconName={ICON_NAMES.MORE_VERTICAL}
+        iconName={IconName.MoreVertical}
         color={Color.textDefault}
+        size={ButtonIconSize.Sm}
       />
       {assetOptionsOpen ? (
         <Menu
@@ -49,17 +53,7 @@ const AssetOptions = ({
           onHide={() => setAssetOptionsOpen(false)}
         >
           <MenuItem
-            iconName={ICON_NAMES.SCAN_BARCODE}
-            data-testid="asset-options__account-details"
-            onClick={() => {
-              setAssetOptionsOpen(false);
-              onViewAccountDetails();
-            }}
-          >
-            {t('accountDetails')}
-          </MenuItem>
-          <MenuItem
-            iconName={ICON_NAMES.EXPORT}
+            iconName={IconName.Export}
             data-testid="asset-options__etherscan"
             onClick={
               blockExplorerLinkText.firstPart === 'addBlockExplorer'
@@ -76,7 +70,7 @@ const AssetOptions = ({
           </MenuItem>
           {isNativeAsset ? null : (
             <MenuItem
-              iconName={ICON_NAMES.TRASH}
+              iconName={IconName.Trash}
               data-testid="asset-options__hide"
               onClick={() => {
                 setAssetOptionsOpen(false);
@@ -86,9 +80,9 @@ const AssetOptions = ({
               {t('hideTokenSymbol', [tokenSymbol])}
             </MenuItem>
           )}
-          {isNativeAsset ? null : (
+          {isNativeAsset || !onViewTokenDetails ? null : (
             <MenuItem
-              iconName={ICON_NAMES.INFO}
+              iconName={IconName.Info}
               data-testid="asset-options__token-details"
               onClick={() => {
                 setAssetOptionsOpen(false);
@@ -111,7 +105,6 @@ const isNotFunc = (p) => {
 AssetOptions.propTypes = {
   isNativeAsset: PropTypes.bool,
   onClickBlockExplorer: PropTypes.func.isRequired,
-  onViewAccountDetails: PropTypes.func.isRequired,
   onRemove: (props) => {
     if (props.isNativeAsset === false && isNotFunc(props.onRemove)) {
       throw new Error(
@@ -119,13 +112,7 @@ AssetOptions.propTypes = {
       );
     }
   },
-  onViewTokenDetails: (props) => {
-    if (props.isNativeAsset === false && isNotFunc(props.onViewTokenDetails)) {
-      throw new Error(
-        'When isNativeAsset is true, onViewTokenDetails is a required prop',
-      );
-    }
-  },
+  onViewTokenDetails: PropTypes.func,
   tokenSymbol: (props) => {
     if (
       props.isNativeAsset === false &&

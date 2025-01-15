@@ -75,9 +75,6 @@
   "asset": {
     "message": "Activ"
   },
-  "attemptingConnect": {
-    "message": "Se încearcă conectarea la blockchain."
-  },
   "attributions": {
     "message": "Atribuții"
   },
@@ -92,9 +89,6 @@
   },
   "back": {
     "message": "Înapoi"
-  },
-  "backToAll": {
-    "message": "Înapoi la toate"
   },
   "backupApprovalInfo": {
     "message": "Acest cod secret este necesar pentru recuperarea portofelului în cazul în care pierdeți dispozitivul, uitați parola, trebuie să reinstalați MetaMask sau vreți să accesați portofelul de pe alt dispozitiv."
@@ -154,14 +148,14 @@
   "connect": {
     "message": "Conectează-te"
   },
-  "connectHardwareWallet": {
-    "message": "Conectare portofel hardware"
-  },
   "connectingTo": {
     "message": "Se conectează la $1"
   },
   "connectingToGoerli": {
     "message": "Se conectează la rețeaua de test Goerli"
+  },
+  "connectingToLineaGoerli": {
+    "message": "Se conectează la rețeaua de test Linea Goerli"
   },
   "connectingToMainnet": {
     "message": "Se conectează la rețeaua Ethereum principală"
@@ -178,9 +172,6 @@
   "copyAddress": {
     "message": "Copiere adresă în clipboard"
   },
-  "copyPrivateKey": {
-    "message": "Aceasta este cheia dumneavoastră privată (clic pentru a copia)"
-  },
   "copyToClipboard": {
     "message": "Copiați în clipboard"
   },
@@ -189,9 +180,6 @@
   },
   "create": {
     "message": "Creați"
-  },
-  "createAccount": {
-    "message": "Creați cont"
   },
   "createPassword": {
     "message": "Creare parolă"
@@ -217,15 +205,6 @@
   "delete": {
     "message": "Șterge"
   },
-  "deleteAccount": {
-    "message": "Ștergeți cont"
-  },
-  "deleteNetwork": {
-    "message": "Ștergeți rețeaua?"
-  },
-  "deleteNetworkDescription": {
-    "message": "Sigur vreți să ștergeți această rețea?"
-  },
   "details": {
     "message": "Detalii"
   },
@@ -247,15 +226,6 @@
   "editContact": {
     "message": "Editați contact"
   },
-  "ensNotFoundOnCurrentNetwork": {
-    "message": "Numele ENS nu s-a găsit pe rețeaua curentă. Încercați să comutați la Rețeaua Ethereum principală."
-  },
-  "ensRegistrationError": {
-    "message": "Eroare la înregistrarea numelui ENS"
-  },
-  "enterPassword": {
-    "message": "Introduceți parola"
-  },
   "enterPasswordContinue": {
     "message": "Introduceți parola pentru a continua"
   },
@@ -267,9 +237,6 @@
   },
   "expandView": {
     "message": "Extindeți vizualizarea"
-  },
-  "exportPrivateKey": {
-    "message": "Exportați cheia privată"
   },
   "failed": {
     "message": "Eșuat"
@@ -371,12 +338,6 @@
   "invalidAddressRecipient": {
     "message": "Adresa destinatarului nu este validă"
   },
-  "invalidAddressRecipientNotEthNetwork": {
-    "message": "Nu este rețea ETH, setați pe minuscule"
-  },
-  "invalidBlockExplorerURL": {
-    "message": "URL Block Explorer nevalid"
-  },
   "invalidRPC": {
     "message": "URL RPC nevalid"
   },
@@ -401,6 +362,9 @@
   },
   "likeToImportTokens": {
     "message": "Adăugați aceste indicative?"
+  },
+  "lineaGoerli": {
+    "message": "Rețea de test Linea Goerli"
   },
   "links": {
     "message": "Link-uri"
@@ -434,9 +398,6 @@
   },
   "mustSelectOne": {
     "message": "Trebuie să selectați cel puțin 1 simbol."
-  },
-  "myAccounts": {
-    "message": "Conturile mele"
   },
   "needImportFile": {
     "message": "Trebuie să selectați un fișier pentru importare.",
@@ -472,9 +433,6 @@
   },
   "next": {
     "message": "Înainte"
-  },
-  "noAddressForName": {
-    "message": "Nu a fost configurată nicio adresă pentru acest nume."
   },
   "noConversionRateAvailable": {
     "message": "Nici o rată de conversie disponibilă"
@@ -537,12 +495,6 @@
   "prev": {
     "message": "Ant"
   },
-  "primaryCurrencySetting": {
-    "message": "Moneda principală"
-  },
-  "primaryCurrencySettingDescription": {
-    "message": "Selectați nativ pentru a prioritiza valorile afișate în moneda nativă a lanțului (ex. ETH). Selectați Fiat pentru a prioritiza valorile afișate în moneda selectată fiat."
-  },
   "privacyMsg": {
     "message": "Politica de Confidențialitate"
   },
@@ -556,17 +508,8 @@
   "privateNetwork": {
     "message": "Rețea privată"
   },
-  "queue": {
-    "message": "Coadă"
-  },
   "readdToken": {
     "message": "Puteți adăuga din nou acest indicativ în viitor accesând „Adăugați indicativ” din meniul de opțiuni al contului dvs."
-  },
-  "recents": {
-    "message": "Recente"
-  },
-  "recipientAddressPlaceholder": {
-    "message": "Căutare, adresa publică (0x) sau ENS"
   },
   "reject": {
     "message": "Respingeți"
@@ -626,12 +569,6 @@
   "search": {
     "message": "Caută"
   },
-  "searchResults": {
-    "message": "Rezultate căutare"
-  },
-  "searchTokens": {
-    "message": "Căutați token-uri"
-  },
   "securityAndPrivacy": {
     "message": "Securitate și confidențialitate"
   },
@@ -653,17 +590,8 @@
   "send": {
     "message": "Trimite"
   },
-  "sendTokens": {
-    "message": "Trimiteți indicative"
-  },
   "settings": {
     "message": "Setări"
-  },
-  "showAdvancedGasInline": {
-    "message": "Controale avansate pentru gas"
-  },
-  "showAdvancedGasInlineDescription": {
-    "message": "Selectați aceasta pentru a arăta prețul gasului și comenzile de limitare direct pe ecranele de trimitere și confirmare."
   },
   "showFiatConversionInTestnets": {
     "message": "Afișează conversiile pe rețelele de test (testnets)"
@@ -676,9 +604,6 @@
   },
   "showHexDataDescription": {
     "message": "Selectați această opțiune pentru a arăta câmpul de date hexazecimale în ecranul de trimitere."
-  },
-  "showPrivateKeys": {
-    "message": "Afișați cheile private"
   },
   "sigRequest": {
     "message": "Solicitare de semnătură"
@@ -727,27 +652,6 @@
   },
   "symbolBetweenZeroTwelve": {
     "message": "Simbolul trebuie să fie de 11 caractere sau mai puțin."
-  },
-  "syncWithMobile": {
-    "message": "Sincronizați cu dispozitivul mobil"
-  },
-  "syncWithMobileBeCareful": {
-    "message": "Asigurați-vă că nimeni altcineva nu poate vedea ecranul dvs. când scanați acest cod"
-  },
-  "syncWithMobileComplete": {
-    "message": "Datele dvs. au fost sincronizate cu succes. Bucurați-vă de aplicația mobilă MetaMask!"
-  },
-  "syncWithMobileDesc": {
-    "message": "Vă puteți sincroniza conturile și informațiile cu dispozitivul dvs. mobil. Deschideți aplicația mobilă MetaMask, mergeți la „Setări” și atingeți „Sincronizare de la extensia de browser”"
-  },
-  "syncWithMobileDescNewUsers": {
-    "message": "Dacă deschideți aplicația pentru mobil MetaMask pentru prima oară, urmați pașii afișați pe telefonul dvs."
-  },
-  "syncWithMobileScanThisCode": {
-    "message": "Scanați acest cod folosind aplicația dvs. mobilă MetaMask"
-  },
-  "syncWithMobileTitle": {
-    "message": "Sincronizați cu mobilul"
   },
   "terms": {
     "message": "Termeni și condiții"
@@ -809,21 +713,11 @@
   "transactionUpdated": {
     "message": "Tranzacție actualizată la $2."
   },
-  "transferBetweenAccounts": {
-    "message": "Transferă între conturile mele"
-  },
   "transferFrom": {
     "message": "Transferați de la"
   },
-  "troubleTokenBalances": {
-    "message": "Am avut dificultăți cu încărcarea soldurilor dvs. de tokenuri. Le puteți vizualiza",
-    "description": "Followed by a link (here) to view token balances"
-  },
   "tryAgain": {
     "message": "Încearcă din nou"
-  },
-  "typePassword": {
-    "message": "Scrieți parola dvs. pentru MetaMask"
   },
   "unapproved": {
     "message": "Neaprobat"
@@ -833,12 +727,6 @@
   },
   "unknown": {
     "message": "Necunoscută"
-  },
-  "unknownCameraError": {
-    "message": "A survenit o eroare la accesarea camerei. Încercați din nou..."
-  },
-  "unknownCameraErrorTitle": {
-    "message": "Hopa! A apărut o eroare..."
   },
   "unknownNetwork": {
     "message": "Rețea privată necunoscută"
@@ -851,9 +739,6 @@
   },
   "unlockMessage": {
     "message": "Web-ul descentralizat așteaptă"
-  },
-  "updatedWithDate": {
-    "message": "Actualizat $1"
   },
   "urlErrorMsg": {
     "message": "URL necesită prefixul potrivit HTTP/HTTPS."

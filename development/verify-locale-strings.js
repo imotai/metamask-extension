@@ -183,10 +183,16 @@ async function verifyEnglishLocale() {
     [
       'ui/**/*.js',
       'ui/**/*.ts',
+      'ui/**/*.tsx',
       'shared/**/*.js',
       'shared/**/*.ts',
+      'shared/**/*.tsx',
+      'app/scripts/lib/**/*.js',
+      'app/scripts/lib/**/*.ts',
       'app/scripts/constants/**/*.js',
       'app/scripts/constants/**/*.ts',
+      'app/scripts/platforms/**/*.js',
+      'app/scripts/controllers/**/*.ts',
     ],
     {
       ignore: [...globsToStrictSearch, testGlob],
@@ -237,6 +243,8 @@ async function verifyEnglishLocale() {
     'appNameFlask',
     'appNameMmi',
     'appDescription',
+    'rejected',
+    'signed',
   ];
 
   const englishMessages = Object.keys(englishLocale);

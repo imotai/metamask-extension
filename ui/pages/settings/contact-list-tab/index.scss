@@ -1,13 +1,15 @@
+@use "design-system";
+
 .address-book-wrapper {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   height: 100%;
 }
 
 .address-book {
   flex: 0.4 1 100%;
 
-  @include screen-sm-max {
+  @include design-system.screen-sm-max {
     flex: 1;
     max-width: 100%;
 
@@ -21,25 +23,12 @@
     align-items: center;
   }
 
-  &__header,
-  &__header--edit {
-    &__name {
-      @include H3;
-
-      margin-left: 24px;
-      max-width: 8em;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-  }
-
   &__header--edit {
     display: flex;
     justify-content: space-between;
 
     .button {
-      @include H6;
+      @include design-system.H6;
 
       justify-content: flex-end;
       color: var(--color-error-default);
@@ -61,7 +50,7 @@
   }
 
   &__title {
-    @include H4;
+    @include design-system.H4;
 
     font-weight: 600;
     margin-bottom: 0.5em;
@@ -78,7 +67,7 @@
   }
 
   &__input {
-    @include H4;
+    @include design-system.H4;
 
     border: 1px solid var(--color-border-muted);
     border-radius: 6px;
@@ -92,7 +81,7 @@
     margin-top: 0.25rem;
 
     &--address {
-      @include H6;
+      @include design-system.H6;
     }
   }
 
@@ -120,7 +109,7 @@
 
       &__label,
       &__label--capitalized {
-        @include H7;
+        @include design-system.H7;
 
         color: var(--color-text-alternative);
         margin-top: 0.75rem;
@@ -132,7 +121,7 @@
 
       &__value,
       &__static-address {
-        @include H4;
+        @include design-system.H4;
 
         display: flex;
         flex-flow: row nowrap;
@@ -140,7 +129,7 @@
         word-break: break-word;
 
         &--address {
-          @include H6;
+          @include design-system.H6;
         }
 
         &--copy-icon {
@@ -155,7 +144,7 @@
       }
 
       &__static-address {
-        @include H6;
+        @include design-system.H6;
 
         &--copy-icon {
           cursor: pointer;
@@ -169,6 +158,35 @@
       .unit-input__input {
         max-width: 100%;
         width: 100%;
+      }
+
+      &__resolution-list,
+      &__single-resolution-list {
+        background: var(--color-background-default);
+        box-sizing: border-box;
+        box-shadow: var(--shadow-size-sm) var(--color-shadow-default);
+        border-radius: 6px;
+        position: absolute;
+        width: 309px;
+        z-index: 10;
+        top: 338px;
+        max-height: 96px;
+        overflow-y: auto;
+      }
+
+      &__resolution-list > *,
+      &__single-resolution-list > * {
+        padding: 8px;
+      }
+
+      &__resolution-list > * {
+        padding-bottom: 0;
+      }
+
+      &__resolution-list {
+        .multichain-send-page__recipient__item:last-child {
+          padding-bottom: 8px;
+        }
       }
     }
   }
@@ -186,25 +204,28 @@
         padding-top: 0;
       }
     }
-
-    .page-container__footer {
-      border-top: none;
-    }
   }
 
   &__add-contact {
     display: flex;
-    flex-flow: column nowrap;
+    flex-flow: column nowrap !important;
     padding-bottom: 0 !important;
+    width: 100%;
     height: 100%;
+    padding-top: 0;
 
     &__content {
       flex: 1 1 auto;
       height: 100%;
+      padding-top: 0;
+
+      &__username {
+        padding-top: 0;
+      }
     }
 
     &__error {
-      @include H7;
+      @include design-system.H7;
 
       left: 8px;
       color: var(--color-error-default);
@@ -214,15 +235,7 @@
 
 .address-book-add-button {
   &__button {
-    position: absolute;
-    top: 80px;
-    right: 16px;
-    width: auto;
-
-    @include screen-sm-max {
-      top: 8px;
-      right: 60px;
-
+    @include design-system.screen-sm-max {
       &--hidden {
         display: none;
       }
@@ -237,7 +250,7 @@
 .address-book-contact-content {
   flex: 0.4 1 100%;
 
-  @include screen-sm-max {
+  @include design-system.screen-sm-max {
     flex: 1;
   }
 }

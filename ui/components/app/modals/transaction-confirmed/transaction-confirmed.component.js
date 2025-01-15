@@ -1,8 +1,13 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../modal';
-import { Icon, ICON_NAMES, ICON_SIZES } from '../../../component-library';
-import { IconColor } from '../../../../helpers/constants/design-system';
+import { Icon, IconName, IconSize, Text } from '../../../component-library';
+import {
+  IconColor,
+  TextVariant,
+  TextAlign,
+  FontWeight,
+} from '../../../../helpers/constants/design-system';
 
 export default class TransactionConfirmed extends PureComponent {
   static contextTypes = {
@@ -31,16 +36,20 @@ export default class TransactionConfirmed extends PureComponent {
       <Modal onSubmit={this.handleSubmit} submitText={t('ok')}>
         <div className="transaction-confirmed__content">
           <Icon
-            name={ICON_NAMES.CHECK}
+            name={IconName.Check}
             color={IconColor.successDefault}
-            size={ICON_SIZES.XL}
+            size={IconSize.Xl}
           />
-          <div className="transaction-confirmed__title">
+          <Text
+            variant={TextVariant.headingMd}
+            fontWeight={FontWeight.Medium}
+            textAlign={TextAlign.Center}
+          >
             {`${t('confirmed')}!`}
-          </div>
-          <div className="transaction-confirmed__description">
+          </Text>
+          <Text textAlign={TextAlign.Center}>
             {t('initialTransactionConfirmed')}
-          </div>
+          </Text>
         </div>
       </Modal>
     );

@@ -1,30 +1,40 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { isEqual } from 'lodash';
-///: BEGIN:ONLY_INCLUDE_IN(flask)
-import { isObject } from '@metamask/utils';
 import {
   SnapCaveatType,
   WALLET_SNAP_PERMISSION_KEY,
-} from '@metamask/rpc-methods';
-///: END:ONLY_INCLUDE_IN
-import { EVENT } from '../../../../shared/constants/metametrics';
+} from '@metamask/snaps-rpc-methods';
+import { SubjectType } from '@metamask/permission-controller';
+import { MetaMetricsEventCategory } from '../../../../shared/constants/metametrics';
 import { PageContainerFooter } from '../../ui/page-container';
 import PermissionsConnectFooter from '../permissions-connect-footer';
-///: BEGIN:ONLY_INCLUDE_IN(flask)
-import { RestrictedMethods } from '../../../../shared/constants/permissions';
-///: END:ONLY_INCLUDE_IN
+import {
+  CaveatTypes,
+  RestrictedMethods,
+} from '../../../../shared/constants/permissions';
+
+import SnapPrivacyWarning from '../snaps/snap-privacy-warning';
+import { getDedupedSnaps } from '../../../helpers/utils/util';
+import { containsEthPermissionsAndNonEvmAccount } from '../../../helpers/utils/permissions';
+import {
+  BackgroundColor,
+  Display,
+  FlexDirection,
+} from '../../../helpers/constants/design-system';
+import { Box } from '../../component-library';
+// eslint-disable-next-line import/no-restricted-paths
+import { PermissionNames } from '../../../../app/scripts/controllers/permissions';
 import { PermissionPageContainerContent } from '.';
 
 export default class PermissionPageContainer extends Component {
   static propTypes = {
     approvePermissionsRequest: PropTypes.func.isRequired,
     rejectPermissionsRequest: PropTypes.func.isRequired,
-    selectedIdentities: PropTypes.array,
-    allIdentitiesSelected: PropTypes.bool,
-    ///: BEGIN:ONLY_INCLUDE_IN(flask)
+    selectedAccounts: PropTypes.array,
+    allAccountsSelected: PropTypes.bool,
     currentPermissions: PropTypes.object,
-    ///: END:ONLY_INCLUDE_IN
+    snapsInstallPrivacyWarningShown: PropTypes.bool.isRequired,
+    setSnapsInstallPrivacyWarningShownStatus: PropTypes.func,
     request: PropTypes.object,
     requestMetadata: PropTypes.object,
     targetSubjectMetadata: PropTypes.shape({
@@ -34,16 +44,16 @@ export default class PermissionPageContainer extends Component {
       extensionId: PropTypes.string,
       iconUrl: PropTypes.string,
     }),
+    history: PropTypes.object.isRequired,
+    connectPath: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
     request: {},
     requestMetadata: {},
-    selectedIdentities: [],
-    allIdentitiesSelected: false,
-    ///: BEGIN:ONLY_INCLUDE_IN(flask)
+    selectedAccounts: [],
+    allAccountsSelected: false,
     currentPermissions: {},
-    ///: END:ONLY_INCLUDE_IN
   };
 
   static contextTypes = {
@@ -51,78 +61,72 @@ export default class PermissionPageContainer extends Component {
     trackEvent: PropTypes.func,
   };
 
-  state = {
-    selectedPermissions: this.getRequestedMethodState(
-      this.getRequestedMethodNames(this.props),
-    ),
-  };
+  state = {};
 
-  componentDidUpdate() {
-    const newMethodNames = this.getRequestedMethodNames(this.props);
+  getRequestedPermissions() {
+    const { request } = this.props;
 
-    if (!isEqual(Object.keys(this.state.selectedPermissions), newMethodNames)) {
-      // this should be a new request, so just overwrite
-      this.setState({
-        selectedPermissions: this.getRequestedMethodState(newMethodNames),
-      });
-    }
-  }
+    // if the request contains a diff this means its an incremental permission request
+    const permissions =
+      request?.diff?.permissionDiffMap ?? request.permissions ?? {};
 
-  getRequestedMethodState(methodNames) {
-    return methodNames.reduce((acc, methodName) => {
-      ///: BEGIN:ONLY_INCLUDE_IN(flask)
-      if (methodName === RestrictedMethods.wallet_snap) {
-        acc[methodName] = this.getDedupedSnapPermissions();
+    return Object.entries(permissions).reduce(
+      (acc, [permissionName, permissionValue]) => {
+        if (permissionName === RestrictedMethods.wallet_snap) {
+          acc[permissionName] = this.getDedupedSnapPermissions();
+          return acc;
+        }
+        acc[permissionName] = permissionValue;
         return acc;
-      }
-      ///: END:ONLY_INCLUDE_IN
-      acc[methodName] = true;
-      return acc;
-    }, {});
+      },
+      {},
+    );
   }
 
-  ///: BEGIN:ONLY_INCLUDE_IN(flask)
   getDedupedSnapPermissions() {
-    const permission =
-      this.props.request.permissions[WALLET_SNAP_PERMISSION_KEY];
-    const requestedSnaps = permission?.caveats[0].value;
-    const currentSnaps =
-      this.props.currentPermissions[WALLET_SNAP_PERMISSION_KEY]?.caveats[0]
-        .value;
-
-    if (!isObject(currentSnaps)) {
-      return permission;
-    }
-
-    const requestedSnapKeys = requestedSnaps ? Object.keys(requestedSnaps) : [];
-    const currentSnapKeys = currentSnaps ? Object.keys(currentSnaps) : [];
-    const dedupedCaveats = requestedSnapKeys.reduce((acc, snapId) => {
-      if (!currentSnapKeys.includes(snapId)) {
-        acc[snapId] = {};
-      }
-      return acc;
-    }, {});
-
+    const { request, currentPermissions } = this.props;
+    const snapKeys = getDedupedSnaps(request, currentPermissions);
+    const permission = request?.permissions?.[WALLET_SNAP_PERMISSION_KEY] || {};
     return {
       ...permission,
-      caveats: [{ type: SnapCaveatType.SnapIds, value: dedupedCaveats }],
+      caveats: [
+        {
+          type: SnapCaveatType.SnapIds,
+          value: snapKeys.reduce((caveatValue, snapId) => {
+            caveatValue[snapId] = {};
+            return caveatValue;
+          }, {}),
+        },
+      ],
     };
   }
-  ///: END:ONLY_INCLUDE_IN
 
-  getRequestedMethodNames(props) {
-    return Object.keys(props.request.permissions || {});
+  showSnapsPrivacyWarning() {
+    this.setState({
+      isShowingSnapsPrivacyWarning: true,
+    });
   }
 
   componentDidMount() {
     this.context.trackEvent({
-      category: EVENT.CATEGORIES.AUTH,
+      category: MetaMetricsEventCategory.Auth,
       event: 'Tab Opened',
       properties: {
         action: 'Connect',
         legacy_event: true,
       },
     });
+
+    if (this.props.request.permissions[WALLET_SNAP_PERMISSION_KEY]) {
+      if (this.props.snapsInstallPrivacyWarningShown === false) {
+        this.showSnapsPrivacyWarning();
+      }
+    }
+  }
+
+  goBack() {
+    const { history, connectPath } = this.props;
+    history.push(connectPath);
   }
 
   onCancel = () => {
@@ -135,22 +139,27 @@ export default class PermissionPageContainer extends Component {
       request: _request,
       approvePermissionsRequest,
       rejectPermissionsRequest,
-      selectedIdentities,
+      selectedAccounts,
     } = this.props;
+
+    const approvedAccounts = selectedAccounts.map(
+      (selectedAccount) => selectedAccount.address,
+    );
+
+    const permittedChainsPermission =
+      _request.permissions?.[PermissionNames.permittedChains];
+    const approvedChainIds = permittedChainsPermission?.caveats.find(
+      (caveat) => caveat.type === CaveatTypes.restrictNetworkSwitching,
+    )?.value;
 
     const request = {
       ..._request,
       permissions: { ..._request.permissions },
-      approvedAccounts: selectedIdentities.map(
-        (selectedIdentity) => selectedIdentity.address,
-      ),
+      ...(_request.permissions?.eth_accounts && { approvedAccounts }),
+      ...(_request.permissions?.[PermissionNames.permittedChains] && {
+        approvedChainIds,
+      }),
     };
-
-    Object.keys(this.state.selectedPermissions).forEach((key) => {
-      if (!this.state.selectedPermissions[key]) {
-        delete request.permissions[key];
-      }
-    });
 
     if (Object.keys(request.permissions).length > 0) {
       approvePermissionsRequest(request);
@@ -159,35 +168,80 @@ export default class PermissionPageContainer extends Component {
     }
   };
 
+  onLeftFooterClick = () => {
+    const requestedPermissions = this.getRequestedPermissions();
+    if (requestedPermissions[PermissionNames.permittedChains] === undefined) {
+      this.goBack();
+    } else {
+      this.onCancel();
+    }
+  };
+
   render() {
     const {
       requestMetadata,
       targetSubjectMetadata,
-      selectedIdentities,
-      allIdentitiesSelected,
+      selectedAccounts,
+      allAccountsSelected,
     } = this.props;
 
+    const requestedPermissions = this.getRequestedPermissions();
+
+    const setIsShowingSnapsPrivacyWarning = (value) => {
+      this.setState({
+        isShowingSnapsPrivacyWarning: value,
+      });
+    };
+
+    const confirmSnapsPrivacyWarning = () => {
+      setIsShowingSnapsPrivacyWarning(false);
+      this.props.setSnapsInstallPrivacyWarningShownStatus(true);
+    };
+
+    const footerLeftActionText = requestedPermissions[
+      PermissionNames.permittedChains
+    ]
+      ? this.context.t('cancel')
+      : this.context.t('back');
+
     return (
-      <div className="page-container permission-approval-container">
+      <>
+        {this.state.isShowingSnapsPrivacyWarning && (
+          <SnapPrivacyWarning
+            onAccepted={() => confirmSnapsPrivacyWarning()}
+            onCanceled={() => this.onCancel()}
+          />
+        )}
         <PermissionPageContainerContent
           requestMetadata={requestMetadata}
           subjectMetadata={targetSubjectMetadata}
-          selectedPermissions={this.state.selectedPermissions}
-          selectedIdentities={selectedIdentities}
-          allIdentitiesSelected={allIdentitiesSelected}
+          selectedPermissions={requestedPermissions}
+          selectedAccounts={selectedAccounts}
+          allAccountsSelected={allAccountsSelected}
         />
-        <div className="permission-approval-container__footers">
-          <PermissionsConnectFooter />
+        <Box
+          display={Display.Flex}
+          backgroundColor={BackgroundColor.backgroundAlternative}
+          flexDirection={FlexDirection.Column}
+        >
+          {targetSubjectMetadata?.subjectType !== SubjectType.Snap && (
+            <PermissionsConnectFooter />
+          )}
           <PageContainerFooter
+            footerClassName="permission-page-container-footer"
             cancelButtonType="default"
-            onCancel={() => this.onCancel()}
-            cancelText={this.context.t('cancel')}
+            onCancel={() => this.onLeftFooterClick()}
+            cancelText={footerLeftActionText}
             onSubmit={() => this.onSubmit()}
-            submitText={this.context.t('connect')}
+            submitText={this.context.t('confirm')}
             buttonSizeLarge={false}
+            disabled={containsEthPermissionsAndNonEvmAccount(
+              selectedAccounts,
+              requestedPermissions,
+            )}
           />
-        </div>
-      </div>
+        </Box>
+      </>
     );
   }
 }

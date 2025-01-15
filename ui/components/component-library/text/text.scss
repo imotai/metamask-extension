@@ -4,7 +4,14 @@
 $text-variants: (
   display: ("md"),
   heading: ( "sm", "md", "lg"),
-  body: ("xs", "sm", "sm-bold", "md", "md-bold", "lg-medium"),
+  body: ("xs", "xs-medium", "sm", "sm-medium", "sm-bold", "md", "md-medium", "md-bold", "lg-medium"),
+);
+
+// Brand evolution font families
+$brand-evolution-font-families: (
+  'display': 'MM Sans',
+  'heading': 'MM Sans',
+  'body': 'CentraNo1',
 );
 
 // Variable output mixin
@@ -17,7 +24,7 @@ $text-variants: (
   line-height: var(--typography-s-#{$type}-#{$size}-line-height);
   letter-spacing: var(--typography-s-#{$type}-#{$size}-letter-spacing);
 
-  @include screen-md-min {
+  @include design-system.screen-md-min {
     font-family: var(--typography-l-#{$type}-#{$size}-font-family);
     font-weight: var(--typography-l-#{$type}-#{$size}-font-weight);
     font-size: var(--typography-l-#{$type}-#{$size}-font-size);
@@ -26,12 +33,25 @@ $text-variants: (
   }
 }
 
+// Brand evolution font mixin
+@mixin brand-evolution-font($type) {
+  $font-family: map-get($brand-evolution-font-families, $type);
 
+  font-family: $font-family, var(--font-family-sans);
+
+  @if $type == 'display' or $type == 'heading' {
+    font-weight: var(--font-weight-normal);
+  }
+}
 
 .mm-text {
   // Set default styles
-  color: var(--color-text-default);
   font-family: var(--font-family-sans);
+
+  &:is(strong),
+  strong {
+    font-weight: var(--font-weight-bold);
+  }
 
   @each $type, $size-options in $text-variants {
     &--#{$type} {
@@ -41,18 +61,24 @@ $text-variants: (
       @each $size in $size-options {
         &-#{$size} {
           @include textVariables($type, $size);
+          // Apply brand evolution font if the brand evolution modifier class is present
+          &-brand-evo {
+            @include brand-evolution-font($type);
+          }
         }
       }
     }
   }
 
-  @each $variant, $color in $color-map {
-    &--color-#{$variant} {
-      color: var($color);
-    }
+  &--inherit {
+    font-family: inherit;
+    font-weight: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
   }
 
-  @each $weight in $font-weight {
+  @each $weight in design-system.$font-weight {
     &--font-weight-#{$weight} {
       @if $weight == "medium" {
         font-weight: var(--font-weight-medium);
@@ -64,31 +90,25 @@ $text-variants: (
     }
   }
 
-  @each $style in $font-style {
+  @each $style in design-system.$font-style {
     &--font-style-#{$style} {
       font-style: $style;
     }
   }
 
-  @each $alignment in $text-align {
+  @each $alignment in design-system.$text-align {
     &--text-align-#{$alignment} {
       text-align: $alignment;
     }
   }
 
-  @each $overflow in $overflow-wrap {
+  @each $overflow in design-system.$overflow-wrap {
     &--overflow-wrap-#{$overflow} {
       overflow-wrap: $overflow;
     }
   }
 
-  &--inherit {
-    font-family: inherit;
-    font-weight: inherit;
-    font-size: inherit;
-    line-height: inherit;
-    letter-spacing: inherit;
-  }
+
 
   &--ellipsis {
     text-overflow: ellipsis;

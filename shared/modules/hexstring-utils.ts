@@ -14,6 +14,16 @@ export function isBurnAddress(address: string) {
   return address === BURN_ADDRESS;
 }
 
+export function isEmptyHexString(value: string): boolean {
+  return [
+    undefined,
+    null,
+    '0x',
+    '0x0',
+    '0x0000000000000000000000000000000000000000000000000000000000000000',
+  ].includes(value);
+}
+
 /**
  * Validates that the input is a hex address. This utility method is a thin
  * wrapper around ethereumjs-util.isValidAddress, with the exception that it
@@ -54,6 +64,16 @@ export function isValidHexAddress(
   }
 
   return isValidAddress(addressToCheck);
+}
+
+/**
+ * Determines if a string is a possible ethereum address
+ *
+ * @param candidate - the input to check
+ * @returns true if the input is a 40 char hex string with optional 0x prefix, false otherwise
+ */
+export function isPossibleAddress(candidate: string) {
+  return /^(0x)?[0-9a-fA-F]{40}$/iu.test(candidate);
 }
 
 export function toChecksumHexAddress(address: string) {

@@ -2,9 +2,7 @@ import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useI18nContext } from '../../../hooks/useI18nContext';
 import TextField from '../../ui/text-field';
-import Button from '../../ui/button';
-import CheckBox from '../../ui/check-box';
-import Typography from '../../ui/typography';
+import { ButtonVariant, Button, Checkbox } from '../../component-library';
 import SrpInput from '../srp-input';
 import { PASSWORD_MIN_LENGTH } from '../../../helpers/constants/common';
 
@@ -101,6 +99,7 @@ export default function CreateNewVault({
       <SrpInput onChange={setSeedPhrase} srpText={t('secretRecoveryPhrase')} />
       <div className="create-new-vault__create-password">
         <TextField
+          data-testid="create-vault-password"
           id="password"
           label={t('newPassword')}
           type="password"
@@ -112,6 +111,7 @@ export default function CreateNewVault({
           largeLabel
         />
         <TextField
+          data-testid="create-vault-confirm-password"
           id="confirm-password"
           label={t('confirmPassword')}
           type="password"
@@ -125,25 +125,21 @@ export default function CreateNewVault({
       </div>
       {includeTerms ? (
         <div className="create-new-vault__terms">
-          <CheckBox
-            id="create-new-vault__terms-checkbox"
-            dataTestId="create-new-vault__terms-checkbox"
-            checked={termsChecked}
-            onClick={toggleTermsCheck}
+          <Checkbox
+            id="create-new-vault-terms-checkbox"
+            data-testid="create-new-vault-terms-checkbox"
+            isChecked={termsChecked}
+            onChange={toggleTermsCheck}
+            label={termsOfUse}
           />
-          <label
-            className="create-new-vault__terms-label"
-            htmlFor="create-new-vault__terms-checkbox"
-          >
-            <Typography as="span">{termsOfUse}</Typography>
-          </label>
         </div>
       ) : null}
       <Button
+        data-testid="create-new-vault-submit-button"
         className="create-new-vault__submit-button"
-        type="primary"
-        submit
+        variant={ButtonVariant.Primary}
         disabled={!isValid}
+        type="submit"
       >
         {submitText}
       </Button>

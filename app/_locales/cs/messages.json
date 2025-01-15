@@ -39,9 +39,6 @@
   "approved": {
     "message": "Schváleno"
   },
-  "attemptingConnect": {
-    "message": "Pokouším se připojit k blockchainu."
-  },
   "attributions": {
     "message": "Zásluhy"
   },
@@ -72,17 +69,11 @@
   "copiedExclamation": {
     "message": "Zkopírováno!"
   },
-  "copyPrivateKey": {
-    "message": "Toto je váš privátní klíč (kliknutím zkopírujte)"
-  },
   "copyToClipboard": {
     "message": "Kopírovat do schránky"
   },
   "create": {
     "message": "Vytvořit"
-  },
-  "createAccount": {
-    "message": "Vytvořit účet"
   },
   "customToken": {
     "message": "Vlastní token"
@@ -108,21 +99,11 @@
   "edit": {
     "message": "Upravit"
   },
-  "enterPassword": {
-    "message": "Zadejte heslo"
-  },
   "etherscanView": {
     "message": "Prohlédněte si účet na Etherscan"
   },
-  "exportPrivateKey": {
-    "message": "Exportovat privátní klíč"
-  },
   "failed": {
     "message": "Neúspěšné"
-  },
-  "fiat": {
-    "message": "FIAT",
-    "description": "Exchange type"
   },
   "fileImportFail": {
     "message": "Import souboru nefunguje? Klikněte sem!",
@@ -172,9 +153,6 @@
   "invalidAddressRecipient": {
     "message": "Adresa příjemce je neplatná"
   },
-  "invalidBlockExplorerURL": {
-    "message": "Neplatné Block Explorer URI"
-  },
   "invalidRPC": {
     "message": "Neplatné RPC URI"
   },
@@ -209,9 +187,6 @@
   "mustSelectOne": {
     "message": "Musíte zvolit aspoň 1 token."
   },
-  "myAccounts": {
-    "message": "Moje účty"
-  },
   "needImportFile": {
     "message": "Musíte zvolit soubor k importu.",
     "description": "User is important an account and needs to add a file to continue"
@@ -237,9 +212,6 @@
   },
   "next": {
     "message": "Další"
-  },
-  "noAddressForName": {
-    "message": "Pro toto jméno nebyla nastavena žádná adresa."
   },
   "noTransactions": {
     "message": "Žádné transakce"
@@ -295,9 +267,6 @@
   "search": {
     "message": "Hledat"
   },
-  "searchTokens": {
-    "message": "Hledat tokeny"
-  },
   "seedPhraseReq": {
     "message": "klíčové fráze mají 12 slov"
   },
@@ -307,14 +276,8 @@
   "send": {
     "message": "Odeslat"
   },
-  "sendTokens": {
-    "message": "Odeslat tokeny"
-  },
   "settings": {
     "message": "Nastavení"
-  },
-  "showPrivateKeys": {
-    "message": "Zobrazit privátní klíče"
   },
   "sigRequest": {
     "message": "Požadavek podpisu"
@@ -363,13 +326,6 @@
   },
   "transactionError": {
     "message": "Chyba transakce. Vyhozena výjimka v kódu kontraktu."
-  },
-  "troubleTokenBalances": {
-    "message": "Měli jsme problém s načtením vašich tokenových zůstatků. Můžete je vidět ",
-    "description": "Followed by a link (here) to view token balances"
-  },
-  "typePassword": {
-    "message": "Zadejte své heslo"
   },
   "unapproved": {
     "message": "Neschváleno"

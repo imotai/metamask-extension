@@ -3,12 +3,12 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 import {
   AlignItems,
+  TextColor,
   BorderColor,
   BorderRadius,
-  Color,
+  BackgroundColor,
   DISPLAY,
   IconColor,
-  Size,
 } from '../../../helpers/constants/design-system';
 
 import Box from '../../ui/box/box';
@@ -16,9 +16,11 @@ import Box from '../../ui/box/box';
 import {
   AvatarAccount,
   AvatarNetwork,
+  AvatarNetworkSize,
   AvatarToken,
   Icon,
-  ICON_NAMES,
+  IconName,
+  IconSize,
   Tag,
 } from '..';
 import {
@@ -66,9 +68,9 @@ const Template: ComponentStory<typeof BadgeWrapper> = (args) => (
   <BadgeWrapper
     badge={
       <AvatarNetwork
-        size={Size.XS}
+        size={AvatarNetworkSize.Xs}
         name="Avalanche"
-        src="./images/avax-token.png"
+        src="./images/avax-token.svg"
         borderColor={BorderColor.borderMuted}
       />
     }
@@ -86,14 +88,14 @@ export const DefaultStory = Template.bind({});
 
 DefaultStory.storyName = 'Default';
 
-export const Children = () => (
+export const Children: ComponentStory<typeof BadgeWrapper> = () => (
   <Box display={DISPLAY.FLEX} gap={4}>
     <BadgeWrapper
       badge={
         <AvatarNetwork
-          size={Size.XS}
+          size={AvatarNetworkSize.Xs}
           name="Avalanche"
-          src="./images/avax-token.png"
+          src="./images/avax-token.svg"
           borderColor={BorderColor.borderMuted}
         />
       }
@@ -103,9 +105,9 @@ export const Children = () => (
     <BadgeWrapper
       badge={
         <AvatarNetwork
-          size={Size.XS}
+          size={AvatarNetworkSize.Xs}
           name="Avalanche"
-          src="./images/avax-token.png"
+          src="./images/avax-token.svg"
           borderColor={BorderColor.borderMuted}
         />
       }
@@ -119,9 +121,9 @@ export const Children = () => (
     <BadgeWrapper
       badge={
         <AvatarNetwork
-          size={Size.SM}
+          size={AvatarNetworkSize.Sm}
           name="Avalanche"
-          src="./images/avax-token.png"
+          src="./images/avax-token.svg"
           borderColor={BorderColor.borderMuted}
         />
       }
@@ -138,14 +140,14 @@ export const Children = () => (
   </Box>
 );
 
-export const Badge = () => (
+export const Badge: ComponentStory<typeof BadgeWrapper> = () => (
   <Box display={DISPLAY.FLEX} gap={4}>
     <BadgeWrapper
       badge={
         <AvatarNetwork
-          size={Size.XS}
+          size={AvatarNetworkSize.Xs}
           name="Avalanche"
-          src="./images/avax-token.png"
+          src="./images/avax-token.svg"
           borderColor={BorderColor.borderMuted}
         />
       }
@@ -155,7 +157,7 @@ export const Badge = () => (
     <BadgeWrapper
       badge={
         <Box
-          backgroundColor={Color.successDefault}
+          backgroundColor={BackgroundColor.successDefault}
           borderRadius={BorderRadius.full}
           borderColor={BorderColor.borderMuted}
           borderWidth={2}
@@ -164,8 +166,8 @@ export const Badge = () => (
       }
     >
       <Icon
-        name={ICON_NAMES.GLOBAL}
-        size={Size.XL}
+        name={IconName.Global}
+        size={IconSize.Xl}
         color={IconColor.iconAlternative}
       />
     </BadgeWrapper>
@@ -174,7 +176,7 @@ export const Badge = () => (
       paddingBottom={1}
       paddingRight={1}
       paddingLeft={1}
-      backgroundColor={Color.backgroundAlternative}
+      backgroundColor={BackgroundColor.backgroundAlternative}
       borderRadius={BorderRadius.SM}
       style={{ alignSelf: 'flex-start' }}
     >
@@ -182,8 +184,8 @@ export const Badge = () => (
         badge={
           <Tag
             label="9999"
-            backgroundColor={Color.errorDefault}
-            labelProps={{ color: Color.errorInverse }}
+            backgroundColor={BackgroundColor.errorDefault}
+            labelProps={{ color: TextColor.errorInverse }}
             borderColor={BorderColor.errorDefault}
           />
         }
@@ -196,7 +198,7 @@ export const Badge = () => (
           paddingLeft={8}
           borderRadius={BorderRadius.SM}
           borderColor={BorderColor.borderDefault}
-          backgroundColor={Color.backgroundDefault}
+          backgroundColor={BackgroundColor.backgroundDefault}
         >
           NFTs
         </Box>
@@ -205,15 +207,15 @@ export const Badge = () => (
   </Box>
 );
 
-export const Position = () => (
+export const Position: ComponentStory<typeof BadgeWrapper> = () => (
   <Box display={DISPLAY.FLEX} gap={4}>
     <BadgeWrapper
       position={BadgeWrapperPosition.topLeft}
       badge={
         <AvatarNetwork
-          size={Size.XS}
+          size={AvatarNetworkSize.Xs}
           name="Avalanche"
-          src="./images/avax-token.png"
+          src="./images/avax-token.svg"
           borderColor={BorderColor.borderMuted}
         />
       }
@@ -223,9 +225,9 @@ export const Position = () => (
     <BadgeWrapper
       badge={
         <AvatarNetwork
-          size={Size.XS}
+          size={AvatarNetworkSize.Xs}
           name="Avalanche"
-          src="./images/avax-token.png"
+          src="./images/avax-token.svg"
           borderColor={BorderColor.borderMuted}
         />
       }
@@ -236,9 +238,9 @@ export const Position = () => (
       position={BadgeWrapperPosition.bottomLeft}
       badge={
         <AvatarNetwork
-          size={Size.XS}
+          size={AvatarNetworkSize.Xs}
           name="Avalanche"
-          src="./images/avax-token.png"
+          src="./images/avax-token.svg"
           borderColor={BorderColor.borderMuted}
         />
       }
@@ -249,9 +251,9 @@ export const Position = () => (
       position={BadgeWrapperPosition.bottomRight}
       badge={
         <AvatarNetwork
-          size={Size.XS}
+          size={AvatarNetworkSize.Xs}
           name="Avalanche"
-          src="./images/avax-token.png"
+          src="./images/avax-token.svg"
           borderColor={BorderColor.borderMuted}
         />
       }
@@ -261,14 +263,14 @@ export const Position = () => (
   </Box>
 );
 
-export const PositionObj = () => (
+export const PositionObj: ComponentStory<typeof BadgeWrapper> = () => (
   <Box display={DISPLAY.FLEX} alignItems={AlignItems.baseline} gap={4}>
     <BadgeWrapper
       badge={
         <AvatarNetwork
-          size={Size.XS}
+          size={AvatarNetworkSize.Xs}
           name="Avalanche"
-          src="./images/avax-token.png"
+          src="./images/avax-token.svg"
           borderColor={BorderColor.borderMuted}
         />
       }
@@ -279,19 +281,19 @@ export const PositionObj = () => (
   </Box>
 );
 
-export const AnchorElementShape = () => (
+export const AnchorElementShape: ComponentStory<typeof BadgeWrapper> = () => (
   <Box display={DISPLAY.FLEX} gap={4}>
     <BadgeWrapper
       badge={
         <Box
-          backgroundColor={Color.errorDefault}
+          backgroundColor={BackgroundColor.errorDefault}
           borderRadius={BorderRadius.full}
           style={{ width: 16, height: 16 }}
         />
       }
     >
       <Box
-        backgroundColor={Color.infoDefault}
+        backgroundColor={BackgroundColor.infoDefault}
         borderRadius={BorderRadius.full}
         style={{ width: 40, height: 40 }}
       />
@@ -299,14 +301,14 @@ export const AnchorElementShape = () => (
     <BadgeWrapper
       badge={
         <Box
-          backgroundColor={Color.errorDefault}
+          backgroundColor={BackgroundColor.errorDefault}
           borderRadius={BorderRadius.full}
           style={{ width: 8, height: 8 }}
         />
       }
     >
       <Box
-        backgroundColor={Color.infoDefault}
+        backgroundColor={BackgroundColor.infoDefault}
         borderRadius={BorderRadius.full}
         style={{ width: 40, height: 40 }}
       />
@@ -315,14 +317,14 @@ export const AnchorElementShape = () => (
       anchorElementShape={BadgeWrapperAnchorElementShape.rectangular}
       badge={
         <Box
-          backgroundColor={Color.errorDefault}
+          backgroundColor={BackgroundColor.errorDefault}
           borderRadius={BorderRadius.full}
           style={{ width: 16, height: 16 }}
         />
       }
     >
       <Box
-        backgroundColor={Color.infoDefault}
+        backgroundColor={BackgroundColor.infoDefault}
         style={{ width: 40, height: 40 }}
       />
     </BadgeWrapper>
@@ -330,14 +332,14 @@ export const AnchorElementShape = () => (
       anchorElementShape={BadgeWrapperAnchorElementShape.rectangular}
       badge={
         <Box
-          backgroundColor={Color.errorDefault}
+          backgroundColor={BackgroundColor.errorDefault}
           borderRadius={BorderRadius.full}
           style={{ width: 8, height: 8 }}
         />
       }
     >
       <Box
-        backgroundColor={Color.infoDefault}
+        backgroundColor={BackgroundColor.infoDefault}
         style={{ width: 40, height: 40 }}
       />
     </BadgeWrapper>
@@ -345,14 +347,14 @@ export const AnchorElementShape = () => (
       anchorElementShape={BadgeWrapperAnchorElementShape.rectangular}
       badge={
         <Box
-          backgroundColor={Color.errorDefault}
+          backgroundColor={BackgroundColor.errorDefault}
           borderRadius={BorderRadius.full}
           style={{ width: 16, height: 16 }}
         />
       }
     >
       <Box
-        backgroundColor={Color.infoDefault}
+        backgroundColor={BackgroundColor.infoDefault}
         style={{ width: 40, height: 80 }}
       />
     </BadgeWrapper>

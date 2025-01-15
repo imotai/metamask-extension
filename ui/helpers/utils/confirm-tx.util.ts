@@ -2,10 +2,9 @@ import currencyFormatter from 'currency-formatter';
 import currencies from 'currency-formatter/currencies';
 import { BigNumber } from 'bignumber.js';
 
-import { unconfirmedTransactionsCountSelector } from '../../selectors';
+import { TransactionMeta } from '@metamask/transaction-controller';
 import { Numeric } from '../../../shared/modules/Numeric';
 import { EtherDenomination } from '../../../shared/constants/common';
-import { TransactionMeta } from '../../../shared/constants/transaction';
 
 export function getHexGasTotal({ gasLimit = '0x0', gasPrice = '0x0' }): string {
   return new Numeric(gasLimit, 16)
@@ -52,12 +51,17 @@ export function getTransactionFee({
   return fee.round(numberOfDecimals).toString();
 }
 
-export function formatCurrency(value: string, currencyCode: string): string {
+export function formatCurrency(
+  value: string,
+  currencyCode: string,
+  precision?: number,
+): string {
   const upperCaseCurrencyCode = currencyCode.toUpperCase();
 
   return currencies.find((currency) => currency.code === upperCaseCurrencyCode)
     ? currencyFormatter.format(Number(value), {
         code: upperCaseCurrencyCode,
+        precision,
       })
     : value;
 }
@@ -84,22 +88,6 @@ export function convertTokenToFiat({
   }
 
   return tokenInFiat.round(2).toString();
-}
-
-/**
- * This is a selector and probably doesn't belong here but its staying for now
- * Note: I did not go so far as to type the entirety of the MetaMask state tree
- * which definitely needs to be done for the full conversion of TypeScript to
- * be successful and as useful as possible.
- * TODO: Type the MetaMask state tree and use that type here.
- *
- * @param state - MetaMask state
- * @returns true if there are unconfirmed transactions in state
- */
-export function hasUnconfirmedTransactions(
-  state: Record<string, any>,
-): boolean {
-  return unconfirmedTransactionsCountSelector(state) > 0;
 }
 
 /**

@@ -1,3 +1,5 @@
+@use "design-system";
+
 .tippy-popper {
   .tippy-tooltip.tippy-tooltip--mm-custom-theme {
     background: var(--color-background-default);
@@ -7,7 +9,7 @@
     padding-bottom: 11px;
 
     .tippy-tooltip-content {
-      @include H7;
+      @include design-system.H7;
 
       text-align: left;
       color: var(--color-text-alternative);
@@ -26,19 +28,19 @@
     }
   }
 
-  &[x-placement^=top] .tippy-tooltip.tippy-tooltip--mm-custom-theme [x-arrow] {
+  &[x-placement^='top'] .tippy-tooltip.tippy-tooltip--mm-custom-theme [x-arrow] {
     border-top-color: var(--color-background-default);
   }
 
-  &[x-placement^=right] .tippy-tooltip.tippy-tooltip--mm-custom-theme [x-arrow] {
+  &[x-placement^='right'] .tippy-tooltip.tippy-tooltip--mm-custom-theme [x-arrow] {
     border-right-color: var(--color-background-default);
   }
 
-  &[x-placement^=left] .tippy-tooltip.tippy-tooltip--mm-custom-theme [x-arrow] {
+  &[x-placement^='left'] .tippy-tooltip.tippy-tooltip--mm-custom-theme [x-arrow] {
     border-left-color: var(--color-background-default);
   }
 
-  &[x-placement^=bottom] .tippy-tooltip.tippy-tooltip--mm-custom-theme [x-arrow] {
+  &[x-placement^='bottom'] .tippy-tooltip.tippy-tooltip--mm-custom-theme [x-arrow] {
     border-bottom-color: var(--color-background-default);
   }
 }

@@ -19,7 +19,7 @@ export default function InfoTooltip({
   iconFillColor = 'var(--color-icon-alternative)',
 }) {
   return (
-    <div className="info-tooltip">
+    <div className="info-tooltip" data-testid="info-tooltip">
       <Tooltip
         interactive
         position={position}
@@ -43,7 +43,7 @@ InfoTooltip.propTypes = {
   /**
    * Text label that shows up after hover
    */
-  contentText: PropTypes.node,
+  contentText: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   /**
    * Shows position of the tooltip
    */

@@ -1,14 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-
-import Box from '../../../ui/box';
-import Identicon from '../../../ui/identicon';
+import {
+  AvatarNetwork,
+  AvatarNetworkSize,
+  AvatarToken,
+  AvatarTokenSize,
+  BadgeWrapper,
+  Box,
+} from '../../../component-library';
 import DetectedTokenValues from '../detected-token-values/detected-token-values';
 import DetectedTokenAddress from '../detected-token-address/detected-token-address';
 import DetectedTokenAggregators from '../detected-token-aggregators/detected-token-aggregators';
-import { DISPLAY } from '../../../../helpers/constants/design-system';
-import { getTokenList } from '../../../../selectors';
+import { Display } from '../../../../helpers/constants/design-system';
+import {
+  getCurrentNetwork,
+  getTestNetworkBackgroundColor,
+  getTokenList,
+} from '../../../../selectors';
 
 const DetectedTokenDetails = ({
   token,
@@ -17,20 +26,36 @@ const DetectedTokenDetails = ({
 }) => {
   const tokenList = useSelector(getTokenList);
   const tokenData = tokenList[token.address?.toLowerCase()];
+  const testNetworkBackgroundColor = useSelector(getTestNetworkBackgroundColor);
+  const currentNetwork = useSelector(getCurrentNetwork);
 
   return (
     <Box
-      display={DISPLAY.FLEX}
+      display={Display.Flex}
       className="detected-token-details"
       marginBottom={4}
     >
-      <Identicon
+      <BadgeWrapper
+        badge={
+          <AvatarNetwork
+            size={AvatarNetworkSize.Xs}
+            name={currentNetwork?.nickname || ''}
+            src={currentNetwork?.rpcPrefs?.imageUrl}
+            backgroundColor={testNetworkBackgroundColor}
+          />
+        }
+        marginRight={2}
         className="detected-token-details__identicon"
-        address={token.address}
-        diameter={40}
-      />
+      >
+        <AvatarToken
+          name={token.symbol}
+          src={token.image}
+          size={AvatarTokenSize.Md}
+        />
+      </BadgeWrapper>
+
       <Box
-        display={DISPLAY.GRID}
+        display={Display.Grid}
         marginLeft={2}
         className="detected-token-details__data"
       >
@@ -55,6 +80,7 @@ DetectedTokenDetails.propTypes = {
     symbol: PropTypes.string,
     iconUrl: PropTypes.string,
     aggregators: PropTypes.array,
+    image: PropTypes.string,
   }),
   handleTokenSelection: PropTypes.func.isRequired,
   tokensListDetected: PropTypes.object,

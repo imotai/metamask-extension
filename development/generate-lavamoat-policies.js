@@ -2,7 +2,9 @@
 const concurrently = require('concurrently');
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
-const { BuildType } = require('./lib/build-type');
+const { loadBuildTypesConfig } = require('./lib/build-type');
+
+const buildTypesConfig = loadBuildTypesConfig();
 
 start().catch((error) => {
   console.error('Policy generation failed.', error);
@@ -19,8 +21,8 @@ async function start() {
       yargsInstance
         .option('build-types', {
           alias: ['t'],
-          choices: Object.values(BuildType),
-          default: Object.values(BuildType),
+          choices: Object.keys(buildTypesConfig.buildTypes),
+          default: Object.keys(buildTypesConfig.buildTypes),
           demandOption: true,
           description: 'The build type(s) to generate policy files for.',
         })
@@ -43,7 +45,7 @@ async function start() {
   );
 
   const buildCommand = devMode ? 'build:dev' : 'build';
-  await concurrently(
+  const { result } = concurrently(
     (Array.isArray(buildTypes) ? buildTypes : [buildTypes]).map(
       (buildType) => ({
         command: `yarn ${buildCommand} scripts:dist --policy-only --lint-fence-files=false --build-type=${buildType}`,
@@ -58,6 +60,7 @@ async function start() {
       maxProcesses: parallel ? buildTypes.length : 1,
     },
   );
+  await result;
 
   console.log('Policy file(s) successfully generated!');
 }

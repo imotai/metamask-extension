@@ -1,129 +1,261 @@
+import { fireEvent, queryByRole, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { fireEvent } from '@testing-library/react';
 import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import { MetamaskNotificationsProvider } from '../../../contexts/metamask-notifications';
+// TODO: Remove restricted import
+// eslint-disable-next-line import/no-restricted-paths
+import { getEnvironmentType } from '../../../../app/scripts/lib/util';
+import { ENVIRONMENT_TYPE_POPUP } from '../../../../shared/constants/app';
 import mockState from '../../../../test/data/mock-state.json';
+import { tEn } from '../../../../test/lib/i18n-helpers';
 import { renderWithProvider } from '../../../../test/lib/render-helpers';
+import { getIsSecurityAlertsEnabled } from '../../../selectors';
 import SecurityTab from './security-tab.container';
 
-const mockSetFeatureFlag = jest.fn();
-const mockSetParticipateInMetaMetrics = jest.fn();
-const mockSetUsePhishDetect = jest.fn();
-const mockSetUseCurrencyRateCheck = jest.fn();
+const mockOpenDeleteMetaMetricsDataModal = jest.fn();
 
-jest.mock('../../../store/actions.ts', () => {
+const mockSetSecurityAlertsEnabled = jest
+  .fn()
+  .mockImplementation(() => () => undefined);
+
+jest.mock('../../../../app/scripts/lib/util', () => {
+  const originalModule = jest.requireActual('../../../../app/scripts/lib/util');
+
   return {
-    setFeatureFlag: () => mockSetFeatureFlag,
-    setParticipateInMetaMetrics: () => mockSetParticipateInMetaMetrics,
-    setUsePhishDetect: () => mockSetUsePhishDetect,
-    setUseCurrencyRateCheck: () => mockSetUseCurrencyRateCheck,
+    ...originalModule,
+    getEnvironmentType: jest.fn(),
+  };
+});
+
+jest.mock('../../../selectors', () => ({
+  ...jest.requireActual('../../../selectors'),
+  getIsSecurityAlertsEnabled: jest.fn(),
+}));
+
+jest.mock('../../../store/actions', () => ({
+  ...jest.requireActual('../../../store/actions'),
+  setSecurityAlertsEnabled: (val) => mockSetSecurityAlertsEnabled(val),
+}));
+
+jest.mock('../../../ducks/app/app.ts', () => {
+  return {
+    openDeleteMetaMetricsDataModal: () => {
+      return mockOpenDeleteMetaMetricsDataModal;
+    },
   };
 });
 
 describe('Security Tab', () => {
-  const mockStore = configureMockStore()(mockState);
+  const mockStore = configureMockStore([thunk])(mockState);
+
+  function renderWithProviders(ui, store) {
+    return renderWithProvider(
+      <MetamaskNotificationsProvider>{ui}</MetamaskNotificationsProvider>,
+      store,
+    );
+  }
+
+  function toggleCheckbox(testId, initialState, skipRender = false) {
+    if (!skipRender) {
+      renderWithProviders(<SecurityTab />, mockStore);
+    }
+
+    const container = screen.getByTestId(testId);
+    const checkbox = queryByRole(container, 'checkbox');
+
+    expect(checkbox).toHaveAttribute('value', initialState ? 'true' : 'false');
+
+    fireEvent.click(checkbox); // This fires the onToggle method of the ToggleButton, but it doesn't change the value of the checkbox
+
+    fireEvent.change(checkbox, {
+      target: { value: !initialState }, // This changes the value of the checkbox
+    });
+
+    expect(checkbox).toHaveAttribute('value', initialState ? 'false' : 'true');
+
+    return true;
+  }
 
   it('should match snapshot', () => {
-    const { container } = renderWithProvider(<SecurityTab />, mockStore);
+    const { container } = renderWithProviders(<SecurityTab />, mockStore);
 
     expect(container).toMatchSnapshot();
   });
 
-  it('navigates to reveal seed words page', () => {
-    const { queryByTestId, history } = renderWithProvider(
-      <SecurityTab />,
-      mockStore,
+  it('toggles Display NFT media enabled', async () => {
+    expect(await toggleCheckbox('displayNftMedia', true)).toBe(true);
+  });
+
+  it('toggles nft detection', async () => {
+    expect(await toggleCheckbox('useNftDetection', true)).toBe(true);
+  });
+
+  it('toggles nft detection from another initial state', async () => {
+    mockState.metamask.openSeaEnabled = false;
+    mockState.metamask.useNftDetection = false;
+
+    const localMockStore = configureMockStore([thunk])(mockState);
+    renderWithProviders(<SecurityTab />, localMockStore);
+
+    expect(await toggleCheckbox('useNftDetection', false, true)).toBe(true);
+  });
+
+  it('toggles phishing detection', async () => {
+    expect(await toggleCheckbox('usePhishingDetection', true)).toBe(true);
+  });
+
+  it('toggles 4byte resolution', async () => {
+    expect(await toggleCheckbox('4byte-resolution-container', true)).toBe(true);
+  });
+
+  it('toggles balance and token price checker', async () => {
+    expect(await toggleCheckbox('currencyRateCheckToggle', true)).toBe(true);
+  });
+
+  it('should toggle token detection', async () => {
+    expect(await toggleCheckbox('autoDetectTokens', true)).toBe(true);
+  });
+
+  it('toggles batch balance checks', async () => {
+    expect(await toggleCheckbox('useMultiAccountBalanceChecker', false)).toBe(
+      true,
+    );
+  });
+
+  it('toggles network details validation', async () => {
+    expect(await toggleCheckbox('useSafeChainsListValidation', false)).toBe(
+      true,
+    );
+  });
+
+  it('toggles metaMetrics', async () => {
+    expect(await toggleCheckbox('participateInMetaMetrics', false)).toBe(true);
+  });
+
+  it('toggles SRP Quiz', async () => {
+    renderWithProviders(<SecurityTab />, mockStore);
+
+    expect(
+      screen.queryByTestId(`srp_stage_introduction`),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('reveal-seed-words'));
+
+    expect(screen.getByTestId(`srp_stage_introduction`)).toBeInTheDocument();
+
+    const container = screen.getByTestId('srp-quiz-header');
+    const checkbox = queryByRole(container, 'button');
+    fireEvent.click(checkbox);
+
+    expect(
+      screen.queryByTestId(`srp_stage_introduction`),
+    ).not.toBeInTheDocument();
+  });
+
+  it('sets IPFS gateway', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<SecurityTab />, mockStore);
+
+    const ipfsField = screen.getByDisplayValue(mockState.metamask.ipfsGateway);
+
+    await user.click(ipfsField);
+
+    await userEvent.clear(ipfsField);
+
+    expect(ipfsField).toHaveValue('');
+    expect(screen.queryByText(tEn('invalidIpfsGateway'))).toBeInTheDocument();
+    expect(
+      screen.queryByText(tEn('forbiddenIpfsGateway')),
+    ).not.toBeInTheDocument();
+
+    await userEvent.type(ipfsField, 'https://');
+
+    expect(ipfsField).toHaveValue('https://');
+    expect(screen.queryByText(tEn('invalidIpfsGateway'))).toBeInTheDocument();
+    expect(
+      screen.queryByText(tEn('forbiddenIpfsGateway')),
+    ).not.toBeInTheDocument();
+
+    await userEvent.type(ipfsField, '//');
+
+    expect(ipfsField).toHaveValue('https:////');
+    expect(screen.queryByText(tEn('invalidIpfsGateway'))).toBeInTheDocument();
+    expect(
+      screen.queryByText(tEn('forbiddenIpfsGateway')),
+    ).not.toBeInTheDocument();
+
+    await userEvent.clear(ipfsField);
+
+    await userEvent.type(ipfsField, 'gateway.ipfs.io');
+
+    expect(ipfsField).toHaveValue('gateway.ipfs.io');
+    expect(
+      screen.queryByText(tEn('invalidIpfsGateway')),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText(tEn('forbiddenIpfsGateway'))).toBeInTheDocument();
+  });
+
+  it('toggles IPFS gateway', async () => {
+    mockState.metamask.ipfsGateway = '';
+
+    const localMockStore = configureMockStore([thunk])(mockState);
+    renderWithProviders(<SecurityTab />, localMockStore);
+
+    expect(await toggleCheckbox('ipfsToggle', false, true)).toBe(true);
+    expect(await toggleCheckbox('ipfsToggle', true, true)).toBe(true);
+  });
+
+  it('toggles ENS domains in address bar', async () => {
+    expect(
+      await toggleCheckbox('ipfs-gateway-resolution-container', false),
+    ).toBe(true);
+  });
+
+  it('clicks "Add Custom Network"', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<SecurityTab />, mockStore);
+
+    // Test the default path where `getEnvironmentType() === undefined`
+    await user.click(screen.getByText(tEn('addCustomNetwork')));
+
+    // Now force it down the path where `getEnvironmentType() === ENVIRONMENT_TYPE_POPUP`
+    jest
+      .mocked(getEnvironmentType)
+      .mockImplementationOnce(() => ENVIRONMENT_TYPE_POPUP);
+
+    global.platform = { openExtensionInBrowser: jest.fn() };
+
+    await user.click(screen.getByText(tEn('addCustomNetwork')));
+    expect(global.platform.openExtensionInBrowser).toHaveBeenCalled();
+  });
+  it('clicks "Delete MetaMetrics Data"', async () => {
+    mockState.metamask.participateInMetaMetrics = true;
+    mockState.metamask.metaMetricsId = 'fake-metametrics-id';
+
+    const localMockStore = configureMockStore([thunk])(mockState);
+    renderWithProviders(<SecurityTab />, localMockStore);
+
+    expect(
+      screen.queryByTestId(`delete-metametrics-data-button`),
+    ).toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Delete MetaMetrics data' }),
     );
 
-    expect(history.location.pathname).toStrictEqual('/');
-
-    fireEvent.click(queryByTestId('reveal-seed-words'));
-
-    expect(history.location.pathname).toStrictEqual('/seed');
+    expect(mockOpenDeleteMetaMetricsDataModal).toHaveBeenCalled();
   });
-
-  it('toggles incoming txs', () => {
-    const { queryAllByRole } = renderWithProvider(<SecurityTab />, mockStore);
-
-    const checkboxes = queryAllByRole('checkbox');
-    const showIncomingCheckbox = checkboxes[1];
-
-    expect(showIncomingCheckbox).toHaveAttribute('value', 'true');
-
-    fireEvent.change(showIncomingCheckbox, {
-      target: { value: false },
+  describe('Blockaid', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
     });
 
-    expect(showIncomingCheckbox).toHaveAttribute('value', 'false');
-  });
-
-  it('toggles phishing detection', () => {
-    const { queryAllByRole } = renderWithProvider(<SecurityTab />, mockStore);
-
-    const checkboxes = queryAllByRole('checkbox');
-    const togglePhishingCheckbox = checkboxes[0];
-
-    expect(togglePhishingCheckbox).toHaveAttribute('value', 'true');
-
-    fireEvent.change(togglePhishingCheckbox, {
-      target: { value: false },
+    it('invokes method setSecurityAlertsEnabled when blockaid is enabled', async () => {
+      getIsSecurityAlertsEnabled.mockReturnValue(false);
+      expect(await toggleCheckbox('securityAlert', false)).toBe(true);
+      expect(mockSetSecurityAlertsEnabled).toHaveBeenCalledWith(true);
     });
-
-    expect(togglePhishingCheckbox).toHaveAttribute('value', 'false');
-  });
-
-  it('toggles metaMetrics', () => {
-    const { queryAllByRole } = renderWithProvider(<SecurityTab />, mockStore);
-
-    const checkboxes = queryAllByRole('checkbox');
-
-    let index = 4;
-    if (process.env.NFTS_V1) {
-      index = 5;
-    }
-    const toggleMetaMetricsCheckbox = checkboxes[index];
-
-    expect(toggleMetaMetricsCheckbox).toHaveAttribute('value', 'false');
-
-    fireEvent.change(toggleMetaMetricsCheckbox, {
-      target: { value: true },
-    });
-
-    expect(toggleMetaMetricsCheckbox).toHaveAttribute('value', 'true');
-  });
-
-  it('toggles batch balance checks', () => {
-    const { queryAllByRole } = renderWithProvider(<SecurityTab />, mockStore);
-
-    const checkboxes = queryAllByRole('checkbox');
-    const batchBalanceChecksCheckbox = checkboxes[4];
-
-    expect(batchBalanceChecksCheckbox).toHaveAttribute('value', 'false');
-
-    fireEvent.change(batchBalanceChecksCheckbox, {
-      target: { value: true },
-    });
-
-    expect(batchBalanceChecksCheckbox).toHaveAttribute('value', 'true');
-  });
-
-  it('should toggle token detection', () => {
-    const { queryAllByRole } = renderWithProvider(<SecurityTab />, mockStore);
-
-    const checkboxes = queryAllByRole('checkbox');
-    const tokenDetectionToggle = checkboxes[2];
-
-    expect(tokenDetectionToggle).toHaveAttribute('value', 'true');
-
-    fireEvent.change(tokenDetectionToggle, {
-      target: { value: false },
-    });
-
-    expect(tokenDetectionToggle).toHaveAttribute('value', 'false');
-
-    fireEvent.change(tokenDetectionToggle, {
-      target: { value: true },
-    });
-
-    expect(tokenDetectionToggle).toHaveAttribute('value', 'true');
   });
 });

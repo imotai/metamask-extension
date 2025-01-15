@@ -1,4 +1,5 @@
-import { ethErrors } from 'eth-rpc-errors';
+import { ERC1155, ERC721 } from '@metamask/controller-utils';
+import { rpcErrors } from '@metamask/rpc-errors';
 import { MESSAGE_TYPE } from '../../../../../shared/constants/app';
 
 const watchAsset = {
@@ -22,8 +23,8 @@ export default watchAsset;
  */
 
 /**
- * @param {import('json-rpc-engine').JsonRpcRequest<WatchAssetParam>} req - The JSON-RPC request object.
- * @param {import('json-rpc-engine').JsonRpcResponse<true>} res - The JSON-RPC response object.
+ * @param {import('@metamask/utils').JsonRpcRequest<WatchAssetParam>} req - The JSON-RPC request object.
+ * @param {import('@metamask/utils').JsonRpcResponse<true>} res - The JSON-RPC response object.
  * @param {Function} _next - The json-rpc-engine 'next' callback.
  * @param {Function} end - The json-rpc-engine 'end' callback.
  * @param {WatchAssetOptions} options
@@ -36,15 +37,30 @@ async function watchAssetHandler(
   { handleWatchAssetRequest },
 ) {
   try {
-    const { options: asset, type } = req.params;
-    const handleWatchAssetResult = await handleWatchAssetRequest(asset, type);
-    await handleWatchAssetResult.result;
+    const {
+      params: { options: asset, type },
+      origin,
+      networkClientId,
+    } = req;
+
+    const { tokenId } = asset;
+
+    if (
+      [ERC721, ERC1155].includes(type) &&
+      tokenId !== undefined &&
+      typeof tokenId !== 'string'
+    ) {
+      return end(
+        rpcErrors.invalidParams({
+          message: `Expected parameter 'tokenId' to be type 'string'. Received type '${typeof tokenId}'`,
+        }),
+      );
+    }
+
+    await handleWatchAssetRequest({ asset, type, origin, networkClientId });
     res.result = true;
     return end();
   } catch (error) {
-    if (error.message === 'User rejected to watch the asset.') {
-      return end(ethErrors.provider.userRejectedRequest());
-    }
     return end(error);
   }
 }

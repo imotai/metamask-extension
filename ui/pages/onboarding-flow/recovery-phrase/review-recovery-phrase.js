@@ -1,26 +1,32 @@
 import React, { useState, useContext } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import Box from '../../../components/ui/box';
 import Button from '../../../components/ui/button';
-import Typography from '../../../components/ui/typography';
 import { useCopyToClipboard } from '../../../hooks/useCopyToClipboard';
 import { useI18nContext } from '../../../hooks/useI18nContext';
 import { ONBOARDING_CONFIRM_SRP_ROUTE } from '../../../helpers/constants/routes';
 import {
-  TEXT_ALIGN,
-  TypographyVariant,
+  Text,
+  Icon,
+  IconName,
+  Box,
+} from '../../../components/component-library';
+import {
+  TextVariant,
+  TextAlign,
   JustifyContent,
-  FONT_WEIGHT,
+  FontWeight,
   IconColor,
 } from '../../../helpers/constants/design-system';
 import {
   ThreeStepProgressBar,
   threeStepStages,
 } from '../../../components/app/step-progress-bar';
-import { EVENT_NAMES, EVENT } from '../../../../shared/constants/metametrics';
+import {
+  MetaMetricsEventCategory,
+  MetaMetricsEventName,
+} from '../../../../shared/constants/metametrics';
 import { MetaMetricsContext } from '../../../contexts/metametrics';
-import { Icon, ICON_NAMES } from '../../../components/component-library';
 import RecoveryPhraseChips from './recovery-phrase-chips';
 
 export default function RecoveryPhrase({ secretRecoveryPhrase }) {
@@ -41,52 +47,48 @@ export default function RecoveryPhrase({ secretRecoveryPhrase }) {
       <ThreeStepProgressBar stage={threeStepStages.RECOVERY_PHRASE_REVIEW} />
       <Box
         justifyContent={JustifyContent.center}
-        textAlign={TEXT_ALIGN.CENTER}
+        textAlign={TextAlign.Center}
         marginBottom={4}
       >
-        <Typography
-          variant={TypographyVariant.H2}
-          fontWeight={FONT_WEIGHT.BOLD}
+        <Text
+          variant={TextVariant.headingLg}
+          fontWeight={FontWeight.Bold}
           className="recovery-phrase__header"
         >
           {t('seedPhraseWriteDownHeader')}
-        </Typography>
+        </Text>
       </Box>
       <Box
         justifyContent={JustifyContent.center}
-        textAlign={TEXT_ALIGN.CENTER}
+        textAlign={TextAlign.Center}
         marginBottom={4}
       >
-        <Typography variant={TypographyVariant.H4}>
+        <Text variant={TextVariant.headingSm} fontWeight={FontWeight.Normal}>
           {t('seedPhraseWriteDownDetails')}
-        </Typography>
+        </Text>
       </Box>
       <Box
-        textAlign={TEXT_ALIGN.LEFT}
+        textAlign={TextAlign.Left}
         marginBottom={4}
         className="recovery-phrase__tips"
       >
-        <Typography
-          variant={TypographyVariant.H4}
-          fontWeight={FONT_WEIGHT.BOLD}
-        >
-          {t('tips')}:
-        </Typography>
+        <Text variant={TextVariant.headingSm}>{t('tips')}:</Text>
         <ul>
           <li>
-            <Typography variant={TypographyVariant.H4}>
+            <Text
+              variant={TextVariant.headingSm}
+              fontWeight={FontWeight.Normal}
+            >
               {t('seedPhraseIntroSidebarBulletOne')}
-            </Typography>
+            </Text>
           </li>
           <li>
-            <Typography variant={TypographyVariant.H4}>
-              {t('seedPhraseIntroSidebarBulletThree')}
-            </Typography>
-          </li>
-          <li>
-            <Typography variant={TypographyVariant.H4}>
-              {t('seedPhraseIntroSidebarBulletFour')}
-            </Typography>
+            <Text
+              variant={TextVariant.headingSm}
+              fontWeight={FontWeight.Normal}
+            >
+              {t('seedPhraseIntroSidebarBulletTwo')}
+            </Text>
           </li>
         </ul>
       </Box>
@@ -120,7 +122,7 @@ export default function RecoveryPhrase({ secretRecoveryPhrase }) {
                 }}
                 icon={
                   <Icon
-                    name={copied ? ICON_NAMES.COPY_SUCCESS : ICON_NAMES.COPY}
+                    name={copied ? IconName.CopySuccess : IconName.Copy}
                     color={IconColor.primaryDefault}
                   />
                 }
@@ -136,9 +138,9 @@ export default function RecoveryPhrase({ secretRecoveryPhrase }) {
               className="recovery-phrase__footer--button"
               onClick={() => {
                 trackEvent({
-                  category: EVENT.CATEGORIES.ONBOARDING,
+                  category: MetaMetricsEventCategory.Onboarding,
                   event:
-                    EVENT_NAMES.ONBOARDING_WALLET_SECURITY_PHRASE_WRITTEN_DOWN,
+                    MetaMetricsEventName.OnboardingWalletSecurityPhraseWrittenDown,
                 });
                 history.push(
                   `${ONBOARDING_CONFIRM_SRP_ROUTE}${isFromReminderParam}`,
@@ -155,8 +157,9 @@ export default function RecoveryPhrase({ secretRecoveryPhrase }) {
             className="recovery-phrase__footer--button"
             onClick={() => {
               trackEvent({
-                category: EVENT.CATEGORIES.ONBOARDING,
-                event: EVENT_NAMES.ONBOARDING_WALLET_SECURITY_PHRASE_REVEALED,
+                category: MetaMetricsEventCategory.Onboarding,
+                event:
+                  MetaMetricsEventName.OnboardingWalletSecurityPhraseRevealed,
               });
               setPhraseRevealed(true);
             }}

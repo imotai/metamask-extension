@@ -1,7 +1,7 @@
+import { TransactionType } from '@metamask/transaction-controller';
 import { CHAIN_IDS } from '../../shared/constants/network';
-import { TransactionType } from '../../shared/constants/transaction';
+import { mockNetworkState } from '../../test/stub/networks';
 import {
-  unconfirmedTransactionsCountSelector,
   sendTokenTokenAmountAndToAddressSelector,
   contractExchangeRateSelector,
   conversionRateSelector,
@@ -17,32 +17,6 @@ const getEthersArrayLikeFromObj = (obj) => {
 };
 
 describe('Confirm Transaction Selector', () => {
-  describe('unconfirmedTransactionsCountSelector', () => {
-    const state = {
-      metamask: {
-        unapprovedTxs: {
-          1: {
-            metamaskNetworkId: '5',
-          },
-          2: {
-            chainId: CHAIN_IDS.MAINNET,
-          },
-        },
-        unapprovedMsgCount: 1,
-        unapprovedPersonalMsgCount: 1,
-        unapprovedTypedMessagesCount: 1,
-        network: '5',
-        provider: {
-          chainId: '0x5',
-        },
-      },
-    };
-
-    it('returns number of txs in unapprovedTxs state with the same network plus unapproved signing method counts', () => {
-      expect(unconfirmedTransactionsCountSelector(state)).toStrictEqual(4);
-    });
-  });
-
   describe('sendTokenTokenAmountAndToAddressSelector', () => {
     const state = {
       confirmTransaction: {
@@ -71,9 +45,12 @@ describe('Confirm Transaction Selector', () => {
   describe('contractExchangeRateSelector', () => {
     const state = {
       metamask: {
-        contractExchangeRates: {
-          '0xTokenAddress': '10',
+        marketData: {
+          '0x5': {
+            '0xTokenAddress': { price: '10' },
+          },
         },
+        ...mockNetworkState({ chainId: CHAIN_IDS.GOERLI }),
       },
       confirmTransaction: {
         txData: {
@@ -92,7 +69,14 @@ describe('Confirm Transaction Selector', () => {
   describe('conversionRateSelector', () => {
     it('returns conversionRate from state', () => {
       const state = {
-        metamask: { conversionRate: 556.12 },
+        metamask: {
+          currencyRates: {
+            ETH: {
+              conversionRate: 556.12,
+            },
+          },
+          ...mockNetworkState({ chainId: CHAIN_IDS.MAINNET }),
+        },
       };
       expect(conversionRateSelector(state)).toStrictEqual(556.12);
     });

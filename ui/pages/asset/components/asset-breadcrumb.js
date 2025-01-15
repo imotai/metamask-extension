@@ -2,21 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Icon,
-  ICON_NAMES,
-  ICON_SIZES,
+  IconName,
+  IconSize,
 } from '../../../components/component-library';
 
 const AssetBreadcrumb = ({ accountName, assetName, onBack }) => {
   return (
     <button className="asset-breadcrumb" onClick={onBack}>
       <Icon
-        name={ICON_NAMES.ARROW_LEFT}
+        name={IconName.ArrowLeft}
         data-testid="asset__back"
         marginInlineEnd={3}
-        size={ICON_SIZES.XS}
+        size={IconSize.Xs}
       />
       <span>{accountName}</span>
-      &nbsp;/&nbsp;
       <span className="asset-breadcrumb__asset">{assetName}</span>
     </button>
   );

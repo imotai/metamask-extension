@@ -33,9 +33,6 @@
   "approve": {
     "message": "Goedkeuren"
   },
-  "attemptingConnect": {
-    "message": "Poging om verbinding te maken met blockchain."
-  },
   "attributions": {
     "message": "Bevoegdheden"
   },
@@ -60,17 +57,11 @@
   "copiedExclamation": {
     "message": "Gekopieerd!"
   },
-  "copyPrivateKey": {
-    "message": "Dit is uw privésleutel (klik om te kopiëren)"
-  },
   "copyToClipboard": {
     "message": "Kopieer naar klembord"
   },
   "create": {
     "message": "creëren"
-  },
-  "createAccount": {
-    "message": "Account aanmaken"
   },
   "decimal": {
     "message": "Decimalen van precisie"
@@ -87,21 +78,11 @@
   "edit": {
     "message": "Bewerk"
   },
-  "enterPassword": {
-    "message": "Voer wachtwoord in"
-  },
   "etherscanView": {
     "message": "Bekijk account op Etherscan"
   },
-  "exportPrivateKey": {
-    "message": "Exporteer privésleutel"
-  },
   "failed": {
     "message": "mislukt"
-  },
-  "fiat": {
-    "message": "FIAT",
-    "description": "Exchange type"
   },
   "fileImportFail": {
     "message": "Bestandsimport werkt niet? Klik hier!",
@@ -155,9 +136,6 @@
   "invalidAddressRecipient": {
     "message": "Het adres van de ontvanger is ongeldig"
   },
-  "invalidBlockExplorerURL": {
-    "message": "Ongeldige Block Explorer URI"
-  },
   "invalidRPC": {
     "message": "Ongeldige RPC-URI"
   },
@@ -186,9 +164,6 @@
   "mustSelectOne": {
     "message": "Moet ten minste één token selecteren."
   },
-  "myAccounts": {
-    "message": "Mijn accounts"
-  },
   "needImportFile": {
     "message": "U moet een bestand selecteren om te importeren.",
     "description": "User is important an account and needs to add a file to continue"
@@ -210,9 +185,6 @@
   },
   "next": {
     "message": "volgende"
-  },
-  "noAddressForName": {
-    "message": "Er is geen adres ingesteld voor deze naam."
   },
   "noTransactions": {
     "message": "Geen transacties"
@@ -271,14 +243,8 @@
   "send": {
     "message": "Sturen"
   },
-  "sendTokens": {
-    "message": "Stuur tokens"
-  },
   "settings": {
     "message": "instellingen"
-  },
-  "showPrivateKeys": {
-    "message": "Privésleutels weergeven"
   },
   "sigRequest": {
     "message": "Ondertekeningsverzoek"
@@ -312,13 +278,6 @@
   },
   "total": {
     "message": "Totaal"
-  },
-  "troubleTokenBalances": {
-    "message": "We hadden problemen bij het laden van uw tokenbalansen. Je kunt ze bekijken",
-    "description": "Followed by a link (here) to view token balances"
-  },
-  "typePassword": {
-    "message": "Typ uw wachtwoord"
   },
   "unknown": {
     "message": "Onbekend"

@@ -72,9 +72,6 @@
   "approved": {
     "message": "Schváleno"
   },
-  "attemptingConnect": {
-    "message": "Pokouším se připojit k blockchainu."
-  },
   "attributions": {
     "message": "Zásluhy"
   },
@@ -89,9 +86,6 @@
   },
   "back": {
     "message": "Zpět"
-  },
-  "backToAll": {
-    "message": "Späť na všetko"
   },
   "backupApprovalInfo": {
     "message": "Tento tajný kód je potrebný na obnovenie peňaženky v prípade straty zariadenia, zabudnutia hesla, preinštalovania MetaMask alebo prístupu k peňaženke na inom zariadení."
@@ -148,14 +142,14 @@
   "connect": {
     "message": "Pripojenie"
   },
-  "connectHardwareWallet": {
-    "message": "Pripojiť hardvérovú peňaženku"
-  },
   "connectingTo": {
     "message": "Pripája sa k $1"
   },
   "connectingToGoerli": {
     "message": "Pripája sa k testovacej sieti Goerli"
+  },
+  "connectingToLineaGoerli": {
+    "message": "Pripája sa k testovacej sieti Linea Goerli"
   },
   "connectingToMainnet": {
     "message": "Připojuji se k Ethereum Mainnet"
@@ -172,9 +166,6 @@
   "copyAddress": {
     "message": "Kopírovať adresu do schránky"
   },
-  "copyPrivateKey": {
-    "message": "Toto je váš privátní klíč (kliknutím zkopírujte)"
-  },
   "copyToClipboard": {
     "message": "Kopírovat do schránky"
   },
@@ -183,9 +174,6 @@
   },
   "create": {
     "message": "Vytvořit"
-  },
-  "createAccount": {
-    "message": "Vytvořit účet"
   },
   "createPassword": {
     "message": "Vytvoriť heslo"
@@ -211,15 +199,6 @@
   "delete": {
     "message": "Odstrániť"
   },
-  "deleteAccount": {
-    "message": "Zmazať účet"
-  },
-  "deleteNetwork": {
-    "message": "Odstrániť sieť?"
-  },
-  "deleteNetworkDescription": {
-    "message": "Naozaj chcete túto sieť odstrániť?"
-  },
   "details": {
     "message": "Podrobnosti"
   },
@@ -241,15 +220,6 @@
   "editContact": {
     "message": "Upraviť kontakt"
   },
-  "ensNotFoundOnCurrentNetwork": {
-    "message": "Názov ENS sa nenašiel v aktuálnej sieti. Skúste sa prepnúť na hlavnú sieť Ethereum."
-  },
-  "ensRegistrationError": {
-    "message": "Chyba pri registrácii názvu ENS"
-  },
-  "enterPassword": {
-    "message": "Zadejte heslo"
-  },
   "enterPasswordContinue": {
     "message": "Pokračujte zadaním hesla"
   },
@@ -262,18 +232,11 @@
   "expandView": {
     "message": "Rozbaliť zobrazenie"
   },
-  "exportPrivateKey": {
-    "message": "Exportovat privátní klíč"
-  },
   "failed": {
     "message": "Neúspěšné"
   },
   "fast": {
     "message": "Rýchle"
-  },
-  "fiat": {
-    "message": "FIAT",
-    "description": "Exchange type"
   },
   "fileImportFail": {
     "message": "Import souboru nefunguje? Klikněte sem!",
@@ -368,12 +331,6 @@
   "invalidAddressRecipient": {
     "message": "Adresa příjemce je neplatná"
   },
-  "invalidAddressRecipientNotEthNetwork": {
-    "message": "Nie sieť ETH, nastaviť malé písmená"
-  },
-  "invalidBlockExplorerURL": {
-    "message": "Neplatné Block Explorer URI"
-  },
   "invalidRPC": {
     "message": "Neplatné RPC URI"
   },
@@ -399,6 +356,9 @@
   "likeToImportTokens": {
     "message": "Chcete přidat tyto tokeny?"
   },
+  "lineaGoerli": {
+    "message": "Testovacia sieť Linea Goerli"
+  },
   "links": {
     "message": "Odkazy"
   },
@@ -422,9 +382,6 @@
   },
   "mustSelectOne": {
     "message": "Musíte zvolit aspoň 1 token."
-  },
-  "myAccounts": {
-    "message": "Moje účty"
   },
   "needImportFile": {
     "message": "Musíte zvolit soubor k importu.",
@@ -460,9 +417,6 @@
   },
   "next": {
     "message": "Další"
-  },
-  "noAddressForName": {
-    "message": "Pro toto jméno nebyla nastavena žádná adresa."
   },
   "noConversionRateAvailable": {
     "message": "Nie je k dispozícii žiadna sadzba konverzie"
@@ -522,12 +476,6 @@
   "prev": {
     "message": "Predchádzajúce"
   },
-  "primaryCurrencySetting": {
-    "message": "Primárna mena"
-  },
-  "primaryCurrencySettingDescription": {
-    "message": "Vyberte natívne, ak chcete priorizovať zobrazovanie hodnôt v natívnej mene reťazca (napr. ETH). Ak chcete priorizovať zobrazovanie hodnôt vo svojej vybranej mene fiat, zvoľte možnosť Fiat."
-  },
   "privacyMsg": {
     "message": "Zásady ochrany osobních údajů"
   },
@@ -541,17 +489,8 @@
   "privateNetwork": {
     "message": "Soukromá síť"
   },
-  "queue": {
-    "message": "Poradie"
-  },
   "readdToken": {
     "message": "Tento token můžete v budoucnu přidat zpět s „Přidat token“ v nastavení účtu."
-  },
-  "recents": {
-    "message": "Posledné"
-  },
-  "recipientAddressPlaceholder": {
-    "message": "Vyhľadávať verejnú adresu (0x) alebo ENS"
   },
   "reject": {
     "message": "Odmítnout"
@@ -611,12 +550,6 @@
   "search": {
     "message": "Hledat"
   },
-  "searchResults": {
-    "message": "Výsledky vyhľadávania"
-  },
-  "searchTokens": {
-    "message": "Hledat tokeny"
-  },
   "securityAndPrivacy": {
     "message": "Bezpečnosť a súkromie"
   },
@@ -638,17 +571,8 @@
   "send": {
     "message": "Odeslat"
   },
-  "sendTokens": {
-    "message": "Odeslat tokeny"
-  },
   "settings": {
     "message": "Nastavení"
-  },
-  "showAdvancedGasInline": {
-    "message": "Pokročilé ovládacie prvky GAS"
-  },
-  "showAdvancedGasInlineDescription": {
-    "message": "Vyberte túto možnosť vtedy, keď chcete priamo na obrazovke odosielania a potvrdenia zobraziť ceny za GAS a ovládacie prvky limitov."
   },
   "showFiatConversionInTestnets": {
     "message": "Zobraziť konverziu na Testnets"
@@ -661,9 +585,6 @@
   },
   "showHexDataDescription": {
     "message": "Vyberte toto, ak chcete, aby sa na obrazovke odosielania zobrazilo hex dátové pole"
-  },
-  "showPrivateKeys": {
-    "message": "Zobrazit privátní klíče"
   },
   "sigRequest": {
     "message": "Požadavek podpisu"
@@ -709,27 +630,6 @@
   },
   "symbolBetweenZeroTwelve": {
     "message": "Symbol musí být mezi 0 a 12 znaky."
-  },
-  "syncWithMobile": {
-    "message": "Synchronizácia s mobilom"
-  },
-  "syncWithMobileBeCareful": {
-    "message": "Pri skenovaní tohto kódu sa uistite, že sa nikto iný nedíva na vašu obrazovku"
-  },
-  "syncWithMobileComplete": {
-    "message": "Vaše údaje boli úspešne synchronizované. Užite si mobilnú aplikáciu MetaMask!"
-  },
-  "syncWithMobileDesc": {
-    "message": "Svoje účty a informácie môžete synchronizovať so svojim mobilným zariadením. Otvorte mobilnú aplikáciu MetaMask, prejdite na „Nastavenia“ a kliknite na „Synchronizovať z rozšírenia prehliadača“."
-  },
-  "syncWithMobileDescNewUsers": {
-    "message": "Ak otvoríte mobilnú aplikáciu MetaMask prvýkrát, postupujte podľa pokynov v telefóne."
-  },
-  "syncWithMobileScanThisCode": {
-    "message": "Naskenujte tento kód pomocou mobilnej aplikácie MetaMask"
-  },
-  "syncWithMobileTitle": {
-    "message": "Synchronizácia s mobilom"
   },
   "terms": {
     "message": "Podmínky použití"
@@ -794,21 +694,11 @@
   "transfer": {
     "message": "Prevod"
   },
-  "transferBetweenAccounts": {
-    "message": "Prevod medzi mojimi účtami"
-  },
   "transferFrom": {
     "message": "Presun z"
   },
-  "troubleTokenBalances": {
-    "message": "Měli jsme problém s načtením vašich tokenových zůstatků. Můžete je vidět ",
-    "description": "Followed by a link (here) to view token balances"
-  },
   "tryAgain": {
     "message": "Skúsiť znova"
-  },
-  "typePassword": {
-    "message": "Zadejte své heslo"
   },
   "unapproved": {
     "message": "Neschváleno"
@@ -818,12 +708,6 @@
   },
   "unknown": {
     "message": "Neznámé"
-  },
-  "unknownCameraError": {
-    "message": "Pri pokuse o prístup k fotoaparátu sa vyskytla chyba. Skúste znova..."
-  },
-  "unknownCameraErrorTitle": {
-    "message": "Och! Niečo zlyhalo..."
   },
   "unknownNetwork": {
     "message": "Neznámá soukromá síť"
@@ -836,9 +720,6 @@
   },
   "unlockMessage": {
     "message": "Decentralizovaný web čaká"
-  },
-  "updatedWithDate": {
-    "message": "Aktualizované $1"
   },
   "urlErrorMsg": {
     "message": "URI vyžadují korektní HTTP/HTTPS prefix."

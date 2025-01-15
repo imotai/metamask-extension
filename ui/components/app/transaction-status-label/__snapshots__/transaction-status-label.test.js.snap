@@ -15,26 +15,7 @@ exports[`TransactionStatusLabel Component should render PENDING properly 1`] = `
   <div
     class="transaction-status-label transaction-status-label--pending transaction-status-label--pending"
   >
-    [pending]
-  </div>
-</div>
-`;
-
-exports[`TransactionStatusLabel Component should render PENDING properly when status is APPROVED 1`] = `
-<div>
-  <div
-    class="transaction-status-label transaction-status-label--pending transaction-status-label--pending"
-  >
-    <div
-      aria-describedby="tippy-tooltip-1"
-      class=""
-      data-original-title="test-title"
-      data-tooltipped=""
-      style="display: inline;"
-      tabindex="0"
-    >
-      [pending]
-    </div>
+    Pending
   </div>
 </div>
 `;
@@ -44,7 +25,17 @@ exports[`TransactionStatusLabel Component should render QUEUED properly 1`] = `
   <div
     class="transaction-status-label transaction-status-label--queued transaction-status-label--queued"
   >
-    [queued]
+    Queued
+  </div>
+</div>
+`;
+
+exports[`TransactionStatusLabel Component should render SIGNING if status is approved 1`] = `
+<div>
+  <div
+    class="transaction-status-label transaction-status-label--signing"
+  >
+    Signing
   </div>
 </div>
 `;
@@ -54,7 +45,7 @@ exports[`TransactionStatusLabel Component should render UNAPPROVED properly 1`] 
   <div
     class="transaction-status-label transaction-status-label--unapproved transaction-status-label--unapproved"
   >
-    [unapproved]
+    Unapproved
   </div>
 </div>
 `;

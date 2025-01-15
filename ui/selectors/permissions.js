@@ -1,19 +1,45 @@
-///: BEGIN:ONLY_INCLUDE_IN(flask)
-import { WALLET_SNAP_PERMISSION_KEY } from '@metamask/rpc-methods';
-///: END:ONLY_INCLUDE_IN
+import { ApprovalType } from '@metamask/controller-utils';
+import { WALLET_SNAP_PERMISSION_KEY } from '@metamask/snaps-rpc-methods';
+import { isEvmAccountType } from '@metamask/keyring-api';
 import { CaveatTypes } from '../../shared/constants/permissions';
+// eslint-disable-next-line import/no-restricted-paths
+import { PermissionNames } from '../../app/scripts/controllers/permissions';
+import { getApprovalRequestsByType } from './approvals';
+import { createDeepEqualSelector } from './util';
 import {
+  getInternalAccount,
   getMetaMaskAccountsOrdered,
   getOriginOfCurrentTab,
-  getSelectedAddress,
-  getSubjectMetadata,
   getTargetSubjectMetadata,
-} from '.';
+} from './selectors';
+import { getSelectedInternalAccount } from './accounts';
 
 // selectors
 
 /**
- * Get the permission subjects object.
+ * Deep equal selector to get the permission subjects object.
+ *
+ * @param {object} state - The current state.
+ * @returns {object} The permissions subjects object.
+ */
+export const getPermissionSubjectsDeepEqual = createDeepEqualSelector(
+  (state) => state.metamask.subjects || {},
+  (subjects) => subjects,
+);
+
+/**
+ * Deep equal selector to get the subject metadata object.
+ *
+ * @param {object} state - The current state.
+ * @returns {object} The subject metadata object.
+ */
+export const getSubjectMetadataDeepEqual = createDeepEqualSelector(
+  (state) => state.metamask.subjectMetadata,
+  (metadata) => metadata,
+);
+
+/**
+ * Selector to get the permission subjects object.
  *
  * @param {object} state - The current state.
  * @returns {object} The permissions subjects object.
@@ -36,6 +62,12 @@ export function getPermittedAccounts(state, origin) {
   );
 }
 
+export function getPermittedChains(state, origin) {
+  return getChainsFromPermission(
+    getChainsPermissionFromSubject(subjectSelector(state, origin)),
+  );
+}
+
 /**
  * Selects the permitted accounts from the eth_accounts permission for the
  * origin of the current tab.
@@ -45,6 +77,18 @@ export function getPermittedAccounts(state, origin) {
  */
 export function getPermittedAccountsForCurrentTab(state) {
   return getPermittedAccounts(state, getOriginOfCurrentTab(state));
+}
+
+export function getPermittedAccountsForSelectedTab(state, activeTab) {
+  return getPermittedAccounts(state, activeTab);
+}
+
+export function getPermittedChainsForCurrentTab(state) {
+  return getPermittedAccounts(state, getOriginOfCurrentTab(state));
+}
+
+export function getPermittedChainsForSelectedTab(state, activeTab) {
+  return getPermittedChains(state, activeTab);
 }
 
 /**
@@ -64,6 +108,21 @@ export function getPermittedAccountsByOrigin(state) {
   }, {});
 }
 
+export function getPermittedChainsByOrigin(state) {
+  const subjects = getPermissionSubjects(state);
+  return Object.keys(subjects).reduce((acc, subjectKey) => {
+    const chains = getChainsFromSubject(subjects[subjectKey]);
+    if (chains.length > 0) {
+      acc[subjectKey] = chains;
+    }
+    return acc;
+  }, {});
+}
+
+export function getSubjectMetadata(state) {
+  return state.metamask.subjectMetadata;
+}
+
 /**
  * Returns an array of connected subject objects, with the following properties:
  * - extensionId
@@ -75,7 +134,7 @@ export function getPermittedAccountsByOrigin(state) {
  * @returns {Array<object>} An array of connected subject objects.
  */
 export function getConnectedSubjectsForSelectedAddress(state) {
-  const { selectedAddress } = state.metamask;
+  const selectedInternalAccount = getSelectedInternalAccount(state);
   const subjects = getPermissionSubjects(state);
   const subjectMetadata = getSubjectMetadata(state);
 
@@ -83,7 +142,7 @@ export function getConnectedSubjectsForSelectedAddress(state) {
 
   Object.entries(subjects).forEach(([subjectKey, subjectValue]) => {
     const exposedAccounts = getAccountsFromSubject(subjectValue);
-    if (!exposedAccounts.includes(selectedAddress)) {
+    if (!exposedAccounts.includes(selectedInternalAccount.address)) {
       return;
     }
 
@@ -99,6 +158,38 @@ export function getConnectedSubjectsForSelectedAddress(state) {
 
   return connectedSubjects;
 }
+
+/**
+ *  @typedef {import('./selectors.types').AccountConnections} AccountConnections
+ */
+
+/**
+ * Retrieves the connected subjects for all addresses.
+ *
+ * @returns {AccountConnections}  The connected subjects for all addresses.
+ */
+export const getConnectedSubjectsForAllAddresses = createDeepEqualSelector(
+  getPermissionSubjects,
+  getSubjectMetadata,
+  (subjects, subjectMetadata) => {
+    const accountsToConnections = {};
+    Object.entries(subjects).forEach(([subjectKey, subjectValue]) => {
+      const exposedAccounts = getAccountsFromSubject(subjectValue);
+      exposedAccounts.forEach((address) => {
+        if (!accountsToConnections[address]) {
+          accountsToConnections[address] = [];
+        }
+        const metadata = subjectMetadata[subjectKey];
+        accountsToConnections[address].push({
+          origin: subjectKey,
+          ...metadata,
+        });
+      });
+    });
+
+    return accountsToConnections;
+  },
+);
 
 export function getSubjectsWithPermission(state, permissionName) {
   const subjects = getPermissionSubjects(state);
@@ -121,7 +212,6 @@ export function getSubjectsWithPermission(state, permissionName) {
   return connectedSubjects;
 }
 
-///: BEGIN:ONLY_INCLUDE_IN(flask)
 export function getSubjectsWithSnapPermission(state, snapId) {
   const subjects = getPermissionSubjects(state);
 
@@ -141,7 +231,6 @@ export function getSubjectsWithSnapPermission(state, snapId) {
       };
     });
 }
-///: END:ONLY_INCLUDE_IN
 
 /**
  * Returns an object mapping addresses to objects mapping origins to connected
@@ -176,6 +265,14 @@ export function getAddressConnectedSubjectMap(state) {
   return addressConnectedIconMap;
 }
 
+export const isAccountConnectedToCurrentTab = createDeepEqualSelector(
+  getPermittedAccountsForCurrentTab,
+  (_state, address) => address,
+  (permittedAccounts, address) => {
+    return permittedAccounts.some((account) => account === address);
+  },
+);
+
 // selector helpers
 
 function getAccountsFromSubject(subject) {
@@ -186,11 +283,35 @@ function getAccountsPermissionFromSubject(subject = {}) {
   return subject.permissions?.eth_accounts || {};
 }
 
+function getChainsFromSubject(subject) {
+  return getChainsFromPermission(getChainsPermissionFromSubject(subject));
+}
+
+function getChainsPermissionFromSubject(subject = {}) {
+  return subject.permissions?.[PermissionNames.permittedChains] || {};
+}
+
 function getAccountsFromPermission(accountsPermission) {
   const accountsCaveat = getAccountsCaveatFromPermission(accountsPermission);
   return accountsCaveat && Array.isArray(accountsCaveat.value)
     ? accountsCaveat.value
     : [];
+}
+
+function getChainsFromPermission(chainsPermission) {
+  const chainsCaveat = getChainsCaveatFromPermission(chainsPermission);
+  return chainsCaveat && Array.isArray(chainsCaveat.value)
+    ? chainsCaveat.value
+    : [];
+}
+
+function getChainsCaveatFromPermission(chainsPermission = {}) {
+  return (
+    Array.isArray(chainsPermission.caveats) &&
+    chainsPermission.caveats.find(
+      (caveat) => caveat.type === CaveatTypes.restrictNetworkSwitching,
+    )
+  );
 }
 
 function getAccountsCaveatFromPermission(accountsPermission = {}) {
@@ -207,23 +328,26 @@ function subjectSelector(state, origin) {
 }
 
 export function getAccountToConnectToActiveTab(state) {
-  const selectedAddress = getSelectedAddress(state);
+  const selectedInternalAccount = getSelectedInternalAccount(state);
   const connectedAccounts = getPermittedAccountsForCurrentTab(state);
 
   const {
-    metamask: { identities },
+    metamask: {
+      internalAccounts: { accounts },
+    },
   } = state;
-  const numberOfAccounts = Object.keys(identities).length;
+  const numberOfAccounts = Object.keys(accounts).length;
 
   if (
     connectedAccounts.length &&
     connectedAccounts.length !== numberOfAccounts
   ) {
     if (
-      connectedAccounts.findIndex((address) => address === selectedAddress) ===
-      -1
+      connectedAccounts.findIndex(
+        (address) => address === selectedInternalAccount.address,
+      ) === -1
     ) {
-      return identities[selectedAddress];
+      return getInternalAccount(state, selectedInternalAccount.id);
     }
   }
 
@@ -244,9 +368,52 @@ export function getOrderedConnectedAccountsForActiveTab(state) {
 
   return orderedAccounts
     .filter((account) => connectedAccounts.includes(account.address))
+    .filter((account) => isEvmAccountType(account.type))
     .map((account) => ({
       ...account,
-      lastActive: permissionHistoryByAccount?.[account.address],
+      metadata: {
+        ...account.metadata,
+        lastActive: permissionHistoryByAccount?.[account.address],
+      },
+    }))
+    .sort(
+      ({ lastSelected: lastSelectedA }, { lastSelected: lastSelectedB }) => {
+        if (lastSelectedA === lastSelectedB) {
+          return 0;
+        } else if (lastSelectedA === undefined) {
+          return 1;
+        } else if (lastSelectedB === undefined) {
+          return -1;
+        }
+
+        return lastSelectedB - lastSelectedA;
+      },
+    );
+}
+
+export function getOrderedConnectedAccountsForConnectedDapp(state, activeTab) {
+  const {
+    metamask: { permissionHistory },
+  } = state;
+
+  const permissionHistoryByAccount =
+    // eslint-disable-next-line camelcase
+    permissionHistory[activeTab.origin]?.eth_accounts?.accounts;
+  const orderedAccounts = getMetaMaskAccountsOrdered(state);
+  const connectedAccounts = getPermittedAccountsForSelectedTab(
+    state,
+    activeTab,
+  );
+
+  return orderedAccounts
+    .filter((account) => connectedAccounts.includes(account.address))
+    .filter((account) => isEvmAccountType(account.type))
+    .map((account) => ({
+      ...account,
+      metadata: {
+        ...account.metadata,
+        lastActive: permissionHistoryByAccount?.[account.address],
+      },
     }))
     .sort(
       ({ lastSelected: lastSelectedA }, { lastSelected: lastSelectedB }) => {
@@ -305,12 +472,13 @@ export function getLastConnectedInfo(state) {
   }, {});
 }
 
-///: BEGIN:ONLY_INCLUDE_IN(flask)
 export function getSnapInstallOrUpdateRequests(state) {
   return Object.values(state.metamask.pendingApprovals)
     .filter(
       ({ type }) =>
-        type === 'wallet_installSnap' || type === 'wallet_updateSnap',
+        type === 'wallet_installSnap' ||
+        type === 'wallet_updateSnap' ||
+        type === 'wallet_installSnapResult',
     )
     .map(({ requestData }) => requestData);
 }
@@ -318,12 +486,12 @@ export function getSnapInstallOrUpdateRequests(state) {
 export function getFirstSnapInstallOrUpdateRequest(state) {
   return getSnapInstallOrUpdateRequests(state)?.[0] ?? null;
 }
-///: END:ONLY_INCLUDE_IN
 
 export function getPermissionsRequests(state) {
-  return Object.values(state.metamask.pendingApprovals)
-    .filter(({ type }) => type === 'wallet_requestPermissions')
-    .map(({ requestData }) => requestData);
+  return getApprovalRequestsByType(
+    state,
+    ApprovalType.WalletRequestPermissions,
+  )?.map(({ requestData }) => requestData);
 }
 
 export function getFirstPermissionRequest(state) {
@@ -333,4 +501,12 @@ export function getFirstPermissionRequest(state) {
 
 export function getPermissions(state, origin) {
   return getPermissionSubjects(state)[origin]?.permissions;
+}
+
+export function getRequestState(state, id) {
+  return state.metamask.pendingApprovals[id]?.requestState;
+}
+
+export function getRequestType(state, id) {
+  return state.metamask.pendingApprovals[id]?.type;
 }

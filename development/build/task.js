@@ -51,7 +51,14 @@ function createTask(taskName, taskFn) {
 
 function runInChildProcess(
   task,
-  { applyLavaMoat, buildType, isLavaMoat, policyOnly, shouldLintFenceFiles },
+  {
+    shouldIncludeSnow,
+    applyLavaMoat,
+    buildType,
+    isLavaMoat,
+    policyOnly,
+    shouldLintFenceFiles,
+  },
 ) {
   const taskName = typeof task === 'string' ? task : task.taskName;
   if (!taskName) {
@@ -68,6 +75,7 @@ function runInChildProcess(
         // LavaMoat if the parent process also ran in LavaMoat.
         isLavaMoat ? 'build' : 'build:dev',
         taskName,
+        `--snow=${shouldIncludeSnow ? 'true' : 'false'}`,
         `--apply-lavamoat=${applyLavaMoat ? 'true' : 'false'}`,
         `--build-type=${buildType}`,
         `--lint-fence-files=${shouldLintFenceFiles ? 'true' : 'false'}`,
@@ -80,12 +88,9 @@ function runInChildProcess(
     );
 
     // forward logs to main process
-    // skip the first stdout event (announcing the process command)
-    childProcess.stdout.once('data', () => {
-      childProcess.stdout.on('data', (data) =>
-        process.stdout.write(`${taskName}: ${data}`),
-      );
-    });
+    childProcess.stdout.on('data', (data) =>
+      process.stdout.write(`${taskName}: ${data}`),
+    );
 
     childProcess.stderr.on('data', (data) =>
       process.stderr.write(`${taskName}: ${data}`),

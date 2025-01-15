@@ -6,13 +6,13 @@ import { BadgeWrapper } from './badge-wrapper';
 
 The `BadgeWrapper` positions a badge on top of another component
 
+[MetaMask Design System Guides](https://www.notion.so/MetaMask-Design-System-Guides-Design-f86ecc914d6b4eb6873a122b83c12940)
+
 <Canvas>
   <Story id="components-componentlibrary-badgewrapper--default-story" />
 </Canvas>
 
 ## Props
-
-The `BadgeWrapper` accepts all props below as well as all [Box](/docs/components-ui-box--default-story#props) component props.
 
 <ArgsTable of={BadgeWrapper} />
 
@@ -30,6 +30,7 @@ import { Color, Size } from '../../../helpers/constants/design-system';
 import {
   AvatarAccount,
   AvatarNetwork,
+  AvatarNetworkSize,
   AvatarToken,
   BadgeWrapper,
   BadgeWrapperAnchorElementShape,
@@ -39,9 +40,9 @@ import {
 <BadgeWrapper
   badge={
     <AvatarNetwork
-      size={Size.XS}
+      size={AvatarNetworkSize.Xs}
       name="Avalanche"
-      src="./images/avax-token.png"
+      src="./images/avax-token.svg"
       borderColor={BorderColor.borderMuted}
     />
   }
@@ -53,9 +54,9 @@ import {
 <BadgeWrapper
   badge={
     <AvatarNetwork
-      size={Size.XS}
+      size={AvatarNetworkSize.Xs}
       name="Avalanche"
-      src="./images/avax-token.png"
+      src="./images/avax-token.svg"
       borderColor={BorderColor.borderMuted}
     />
   }
@@ -69,9 +70,9 @@ import {
 <BadgeWrapper
   badge={
     <AvatarNetwork
-      size={Size.SM}
+      size={AvatarNetworkSize.Sm}
       name="Avalanche"
-      src="./images/avax-token.png"
+      src="./images/avax-token.svg"
       borderColor={BorderColor.borderMuted}
     />
   }
@@ -110,19 +111,21 @@ import {
 import {
   AvatarAccount,
   AvatarNetwork,
+  AvatarNetworkSize,
   BadgeWrapper,
   BadgeWrapperAnchorElementShape,
   Icon,
-  ICON_NAMES,
+  IconSize,
+  IconName,
   Tag,
 } from '../../component-library';
 
 <BadgeWrapper
   badge={
     <AvatarNetwork
-      size={Size.XS}
+      size={AvatarNetworkSize.Xs}
       name="Avalanche"
-      src="./images/avax-token.png"
+      src="./images/avax-token.svg"
       borderColor={BorderColor.borderMuted}
     />
   }
@@ -141,8 +144,8 @@ import {
   }
 >
   <Icon
-    name={ICON_NAMES.GLOBAL}
-    size={Size.XL}
+    name={IconName.Global}
+    size={IconSize.Xl}
     color={IconColor.iconAlternative}
   />
 </BadgeWrapper>
@@ -202,6 +205,7 @@ import { BorderColor Size } from '../../../helpers/constants/design-system';
 import {
   AvatarAccount,
   AvatarNetwork,
+  AvatarNetworkSize,
   BadgeWrapper,
   BadgeWrapperPosition
 } from '../../component-library';
@@ -210,9 +214,9 @@ import {
   position={BadgeWrapperPosition.topLeft}
   badge={
     <AvatarNetwork
-      size={Size.XS}
+      size={AvatarNetworkSize.Xs}
       name="Avalanche"
-      src="./images/avax-token.png"
+      src="./images/avax-token.svg"
       borderColor={BorderColor.borderMuted}
     />
   }
@@ -222,9 +226,9 @@ import {
 <BadgeWrapper
   badge={
     <AvatarNetwork
-      size={Size.XS}
+      size={AvatarNetworkSize.Xs}
       name="Avalanche"
-      src="./images/avax-token.png"
+      src="./images/avax-token.svg"
       borderColor={BorderColor.borderMuted}
     />
   }
@@ -235,9 +239,9 @@ import {
   position={BadgeWrapperPosition.bottomLeft}
   badge={
     <AvatarNetwork
-      size={Size.XS}
+      size={AvatarNetworkSize.Xs}
       name="Avalanche"
-      src="./images/avax-token.png"
+      src="./images/avax-token.svg"
       borderColor={BorderColor.borderMuted}
     />
   }
@@ -248,9 +252,9 @@ import {
   position={BadgeWrapperPosition.bottomRight}
   badge={
     <AvatarNetwork
-      size={Size.XS}
+      size={AvatarNetworkSize.Xs}
       name="Avalanche"
-      src="./images/avax-token.png"
+      src="./images/avax-token.svg"
       borderColor={BorderColor.borderMuted}
     />
   }
@@ -278,6 +282,7 @@ import { BorderColor Size } from '../../../helpers/constants/design-system';
 import {
   AvatarAccount,
   AvatarNetwork,
+  AvatarNetworkSize,
   BadgeWrapper,
 } from '../../component-library';
 
@@ -285,9 +290,9 @@ import {
 <BadgeWrapper
   badge={
     <AvatarNetwork
-      size={Size.XS}
+      size={AvatarNetworkSize.Xs}
       name="Avalanche"
-      src="./images/avax-token.png"
+      src="./images/avax-token.svg"
       borderColor={BorderColor.borderMuted}
     />
   }

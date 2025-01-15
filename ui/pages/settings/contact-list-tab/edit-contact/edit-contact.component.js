@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
-import Identicon from '../../../../components/ui/identicon';
 import Button from '../../../../components/ui/button/button.component';
 import TextField from '../../../../components/ui/text-field';
 import PageContainerFooter from '../../../../components/ui/page-container/page-container-footer';
@@ -9,6 +8,19 @@ import {
   isBurnAddress,
   isValidHexAddress,
 } from '../../../../../shared/modules/hexstring-utils';
+import {
+  AvatarAccount,
+  AvatarAccountSize,
+  Box,
+  Text,
+} from '../../../../components/component-library';
+
+import {
+  AlignItems,
+  BlockSize,
+  Display,
+  TextVariant,
+} from '../../../../helpers/constants/design-system';
 
 export default class EditContact extends PureComponent {
   static contextTypes = {
@@ -59,19 +71,43 @@ export default class EditContact extends PureComponent {
 
     return (
       <div className="settings-page__content-row address-book__edit-contact">
-        <div className="settings-page__header address-book__header--edit">
-          <Identicon address={address} diameter={60} />
-          <Button
-            type="link"
-            className="settings-page__address-book-button"
-            onClick={async () => {
-              await removeFromAddressBook(chainId, address);
-              history.push(listRoute);
-            }}
+        <Box
+          className="settings-page__header address-book__header--edit"
+          paddingLeft={6}
+          paddingRight={6}
+          width={BlockSize.Full}
+          alignItems={AlignItems.center}
+        >
+          <Box
+            display={Display.Flex}
+            alignItems={AlignItems.center}
+            style={{ overflow: 'hidden' }}
+            paddingRight={2}
           >
-            {t('deleteAccount')}
-          </Button>
-        </div>
+            <AvatarAccount size={AvatarAccountSize.Lg} address={address} />
+            <Text
+              className="address-book__header__name"
+              variant={TextVariant.bodyLgMedium}
+              marginInlineStart={4}
+              style={{ overflow: 'hidden' }}
+              ellipsis
+            >
+              {name || address}
+            </Text>
+          </Box>
+          <Box className="settings-page__address-book-button">
+            <Button
+              type="link"
+              onClick={async () => {
+                await removeFromAddressBook(chainId, address);
+                history.push(listRoute);
+              }}
+              style={{ display: 'contents' }}
+            >
+              {t('deleteContact')}
+            </Button>
+          </Box>
+        </Box>
         <div className="address-book__edit-contact__content">
           <div className="address-book__view-contact__group">
             <div className="address-book__view-contact__group__label">

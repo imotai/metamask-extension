@@ -1,14 +1,16 @@
 import { EventEmitter } from 'events';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Text } from '../../components/component-library';
+import { TextVariant, TextColor } from '../../helpers/constants/design-system';
 import Button from '../../components/ui/button';
 import TextField from '../../components/ui/text-field';
 import Mascot from '../../components/ui/mascot';
 import { DEFAULT_ROUTE } from '../../helpers/constants/routes';
 import {
-  EVENT,
-  EVENT_NAMES,
-  CONTEXT_PROPS,
+  MetaMetricsContextProp,
+  MetaMetricsEventCategory,
+  MetaMetricsEventName,
 } from '../../../shared/constants/metametrics';
 import { SUPPORT_LINK } from '../../../shared/lib/ui-utils';
 import { isBeta } from '../../helpers/utils/build-types';
@@ -80,8 +82,8 @@ export default class UnlockPage extends Component {
       await onSubmit(password);
       this.context.trackEvent(
         {
-          category: EVENT.CATEGORIES.NAVIGATION,
-          event: EVENT_NAMES.APP_UNLOCKED,
+          category: MetaMetricsEventCategory.Navigation,
+          event: MetaMetricsEventName.AppUnlocked,
           properties: {
             failed_attempts: this.failed_attempts,
           },
@@ -96,8 +98,8 @@ export default class UnlockPage extends Component {
       if (message === 'Incorrect password') {
         await forceUpdateMetamaskState();
         this.context.trackEvent({
-          category: EVENT.CATEGORIES.NAVIGATION,
-          event: EVENT_NAMES.APP_UNLOCKED_FAILED,
+          category: MetaMetricsEventCategory.Navigation,
+          event: MetaMetricsEventName.AppUnlockedFailed,
           properties: {
             reason: 'incorrect_password',
             failed_attempts: this.failed_attempts,
@@ -155,6 +157,12 @@ export default class UnlockPage extends Component {
     const { t } = this.context;
     const { onRestore } = this.props;
 
+    let needHelpText = t('appNameMmi');
+
+    ///: BEGIN:ONLY_INCLUDE_IF(build-main,build-beta,build-flask)
+    needHelpText = t('needHelpLinkText');
+    ///: END:ONLY_INCLUDE_IF
+
     return (
       <div className="unlock-page__container">
         <div className="unlock-page" data-testid="unlock-page">
@@ -170,7 +178,15 @@ export default class UnlockPage extends Component {
               </div>
             ) : null}
           </div>
-          <h1 className="unlock-page__title">{t('welcomeBack')}</h1>
+          <Text
+            data-testid="unlock-page-title"
+            as="h1"
+            variant={TextVariant.headingLg}
+            marginTop={1}
+            color={TextColor.textAlternative}
+          >
+            {t('welcomeBack')}
+          </Text>
           <div>{t('unlockMessage')}</div>
           <form className="unlock-page__form" onSubmit={this.handleSubmit}>
             <TextField
@@ -208,21 +224,21 @@ export default class UnlockPage extends Component {
                 onClick={() => {
                   this.context.trackEvent(
                     {
-                      category: EVENT.CATEGORIES.NAVIGATION,
-                      event: EVENT_NAMES.SUPPORT_LINK_CLICKED,
+                      category: MetaMetricsEventCategory.Navigation,
+                      event: MetaMetricsEventName.SupportLinkClicked,
                       properties: {
                         url: SUPPORT_LINK,
                       },
                     },
                     {
                       contextPropsIntoEventProperties: [
-                        CONTEXT_PROPS.PAGE_TITLE,
+                        MetaMetricsContextProp.PageTitle,
                       ],
                     },
                   );
                 }}
               >
-                {t('needHelpLinkText')}
+                {needHelpText}
               </a>,
             ])}
           </div>

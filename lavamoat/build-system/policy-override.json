@@ -5,6 +5,7 @@
         "$root$": true,
         "@babel/preset-env": true,
         "@babel/preset-react": true,
+        "@babel/plugin-transform-logical-assignment-operators": true,
         "@babel/plugin-transform-runtime": true,
         "@babel/plugin-proposal-class-properties": true,
         "@babel/plugin-proposal-nullish-coalescing-operator": true,
@@ -30,6 +31,13 @@
       },
       "globals": {
         "process.versions": true
+      }
+    },
+    "@babel/plugin-transform-logical-assignment-operators": {
+      "packages": {
+        "@babel/core": true,
+        "@babel/preset-env>@babel/helper-plugin-utils": true,
+        "@babel/preset-env>@babel/plugin-syntax-logical-assignment-operators": true
       }
     },
     "depcheck>@babel/traverse": {
@@ -81,21 +89,26 @@
     },
     "eslint-plugin-jest>@typescript-eslint/utils>eslint-utils": {
       "packages": {
-        "eslint-plugin-jest>@typescript-eslint/utils>eslint-utils>eslint-visitor-keys": true
+        "eslint>@eslint-community/eslint-utils": true,
+        "eslint-plugin-jest>@typescript-eslint/utils>eslint-utils>eslint-visitor-keys": true,
+        "semver": true
       }
     },
     "eslint-plugin-jest>@typescript-eslint/utils": {
       "builtin": {
+        "assert": true,
         "path": true
       },
       "packages": {
         "eslint-plugin-jest>@typescript-eslint/experimental-utils>@typescript-eslint/types": true,
-        "eslint-plugin-jest>@typescript-eslint/utils>eslint-utils": true,
+        "eslint>@eslint-community/eslint-utils": true,
         "eslint-plugin-jest>@typescript-eslint/utils>@typescript-eslint/types": true,
         "eslint-plugin-jest>@typescript-eslint/utils>@typescript-eslint/scope-manager": true,
         "eslint-plugin-jest>@typescript-eslint/utils>webpack>eslint-scope": true,
+        "eslint-plugin-mocha>eslint-utils": true,
         "@typescript-eslint/parser>@typescript-eslint/types": true,
         "eslint": true,
+        "semver": true,
         "@typescript-eslint/parser>@typescript-eslint/scope-manager": true,
         "eslint>eslint-scope": true,
         "eslint>eslint-utils": true,
@@ -110,12 +123,18 @@
         "eslint>eslint-visitor-keys": true
       }
     },
+    "eslint-plugin-mocha>eslint-utils": {
+      "packages": {
+        "eslint-plugin-mocha>eslint-utils>eslint-visitor-keys": true
+      }
+    },
     "@typescript-eslint/eslint-plugin>@typescript-eslint/utils": {
       "builtin": {
         "path": true
       },
       "packages": {
         "eslint>eslint-utils": true,
+        "eslint-plugin-mocha>eslint-utils": true,
         "@typescript-eslint/parser>@typescript-eslint/types": true,
         "eslint": true,
         "@typescript-eslint/parser>@typescript-eslint/scope-manager": true,
@@ -159,7 +178,6 @@
         "@typescript-eslint/eslint-plugin>tsutils": true,
         "eslint-plugin-jest>@typescript-eslint/utils": true,
         "eslint>debug": true,
-        "madge>debug": true,
         "typescript": true,
         "nock>debug": true
       }

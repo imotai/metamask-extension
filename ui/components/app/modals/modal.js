@@ -2,30 +2,41 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
-import * as actions from '../../../store/actions';
-import isMobileView from '../../../helpers/utils/is-mobile-view';
+// TODO: Remove restricted import
+// eslint-disable-next-line import/no-restricted-paths
 import { getEnvironmentType } from '../../../../app/scripts/lib/util';
 import { ENVIRONMENT_TYPE_POPUP } from '../../../../shared/constants/app';
+import isMobileView from '../../../helpers/utils/is-mobile-view';
+import * as actions from '../../../store/actions';
+///: BEGIN:ONLY_INCLUDE_IF(build-mmi)
+import { mmiActionsFactory } from '../../../store/institutional/institution-background';
+///: END:ONLY_INCLUDE_IF
 
-// Modal Components
-import AddNetworkModal from '../../../pages/onboarding-flow/add-network-modal';
-import AccountDetailsModal from './account-details-modal';
-import ExportPrivateKeyModal from './export-private-key-modal';
+///: BEGIN:ONLY_INCLUDE_IF(build-mmi)
+import ConfirmRemoveJWT from '../../institutional/confirm-remove-jwt-modal';
+import CustodyConfirmLink from '../../institutional/custody-confirm-link-modal';
+import InteractiveReplacementTokenModal from '../../institutional/interactive-replacement-token-modal';
+import TransactionFailed from '../../institutional/transaction-failed-modal';
+///: END:ONLY_INCLUDE_IF
 import HideTokenConfirmationModal from './hide-token-confirmation-modal';
 import QRScanner from './qr-scanner';
 
-import HoldToRevealModal from './hold-to-reveal-modal';
 import ConfirmRemoveAccount from './confirm-remove-account';
 import ConfirmResetAccount from './confirm-reset-account';
 import TransactionConfirmed from './transaction-confirmed';
 
-import FadeModal from './fade-modal';
-import RejectTransactions from './reject-transactions';
 import ConfirmDeleteNetwork from './confirm-delete-network';
-import EditApprovalPermission from './edit-approval-permission';
-import NewAccountModal from './new-account-modal';
-import CustomizeNonceModal from './customize-nonce';
 import ConvertTokenToNftModal from './convert-token-to-nft-modal/convert-token-to-nft-modal';
+import CustomizeNonceModal from './customize-nonce';
+import EditApprovalPermission from './edit-approval-permission';
+import FadeModal from './fade-modal';
+import NewAccountModal from './new-account-modal';
+import RejectTransactions from './reject-transactions';
+import TransactionAlreadyConfirmed from './transaction-already-confirmed';
+
+// Metamask Notifications
+import ConfirmTurnOffProfileSyncing from './confirm-turn-off-profile-syncing';
+import TurnOnMetamaskNotifications from './turn-on-metamask-notifications/turn-on-metamask-notifications';
 
 const modalContainerBaseStyle = {
   transform: 'translate3d(-50%, 0, 0px)',
@@ -47,24 +58,23 @@ const modalContainerMobileStyle = {
   top: '12.5%',
 };
 
-const accountModalStyle = {
+///: BEGIN:ONLY_INCLUDE_IF(build-mmi)
+const custodyConfirmModalStyle = {
   mobileModalStyle: {
     width: '95%',
-    // top: isPopupOrNotification() === 'popup' ? '52vh' : '36.5vh',
-    boxShadow: 'var(--shadow-size-xs) var(--color-shadow-default)',
+    boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 2px 2px',
     borderRadius: '4px',
-    top: '10%',
+    top: '30%',
     transform: 'none',
     left: '0',
     right: '0',
     margin: '0 auto',
   },
   laptopModalStyle: {
-    width: '335px',
-    // top: 'calc(33% + 45px)',
-    boxShadow: 'var(--shadow-size-xs) var(--color-shadow-default)',
+    width: '360px',
+    boxShadow: 'rgba(0, 0, 0, 0.15) 0px 2px 2px 2px',
     borderRadius: '4px',
-    top: '10%',
+    top: '30%',
     transform: 'none',
     left: '0',
     right: '0',
@@ -74,12 +84,9 @@ const accountModalStyle = {
     borderRadius: '4px',
   },
 };
+///: END:ONLY_INCLUDE_IF
 
 const MODALS = {
-  ONBOARDING_ADD_NETWORK: {
-    contents: <AddNetworkModal />,
-    ...accountModalStyle,
-  },
   NEW_ACCOUNT: {
     contents: <NewAccountModal />,
     mobileModalStyle: {
@@ -107,31 +114,9 @@ const MODALS = {
     },
   },
 
-  ACCOUNT_DETAILS: {
-    contents: <AccountDetailsModal />,
-    ...accountModalStyle,
-  },
-
-  EXPORT_PRIVATE_KEY: {
-    contents: <ExportPrivateKeyModal />,
-    ...accountModalStyle,
-  },
-
-  HOLD_TO_REVEAL_SRP: {
-    contents: <HoldToRevealModal />,
-    mobileModalStyle: {
-      ...modalContainerMobileStyle,
-    },
-    laptopModalStyle: {
-      ...modalContainerLaptopStyle,
-    },
-    contentStyle: {
-      borderRadius: '8px',
-    },
-  },
-
   HIDE_TOKEN_CONFIRMATION: {
     contents: <HideTokenConfirmationModal />,
+    testId: 'hide-token-confirmation-modal',
     mobileModalStyle: {
       width: '95%',
       top: getEnvironmentType() === ENVIRONMENT_TYPE_POPUP ? '52vh' : '36.5vh',
@@ -238,8 +223,20 @@ const MODALS = {
     },
   },
 
+  TRANSACTION_ALREADY_CONFIRMED: {
+    disableBackdropClick: true,
+    contents: <TransactionAlreadyConfirmed />,
+    mobileModalStyle: {
+      ...modalContainerMobileStyle,
+    },
+    laptopModalStyle: {
+      ...modalContainerLaptopStyle,
+    },
+  },
+
   QR_SCANNER: {
     contents: <QRScanner />,
+    testId: 'qr-scanner-modal',
     mobileModalStyle: {
       ...modalContainerMobileStyle,
     },
@@ -277,6 +274,79 @@ const MODALS = {
     },
   },
 
+  ///: BEGIN:ONLY_INCLUDE_IF(build-mmi)
+  CONFIRM_REMOVE_JWT: {
+    contents: <ConfirmRemoveJWT />,
+    mobileModalStyle: {
+      ...modalContainerMobileStyle,
+    },
+    laptopModalStyle: {
+      ...modalContainerLaptopStyle,
+    },
+    contentStyle: {
+      borderRadius: '8px',
+    },
+  },
+
+  TRANSACTION_FAILED: {
+    disableBackdropClick: true,
+    contents: <TransactionFailed />,
+    mobileModalStyle: {
+      ...modalContainerMobileStyle,
+    },
+    laptopModalStyle: {
+      ...modalContainerLaptopStyle,
+    },
+    contentStyle: {
+      borderRadius: '8px',
+    },
+  },
+
+  CUSTODY_CONFIRM_LINK: {
+    contents: <CustodyConfirmLink />,
+    ...custodyConfirmModalStyle,
+  },
+
+  INTERACTIVE_REPLACEMENT_TOKEN_MODAL: {
+    contents: <InteractiveReplacementTokenModal />,
+    mobileModalStyle: {
+      ...modalContainerMobileStyle,
+    },
+    laptopModalStyle: {
+      ...modalContainerLaptopStyle,
+    },
+    contentStyle: {
+      borderRadius: '8px',
+    },
+  },
+  ///: END:ONLY_INCLUDE_IF
+
+  CONFIRM_TURN_OFF_PROFILE_SYNCING: {
+    contents: <ConfirmTurnOffProfileSyncing />,
+    mobileModalStyle: {
+      ...modalContainerMobileStyle,
+    },
+    laptopModalStyle: {
+      ...modalContainerLaptopStyle,
+    },
+    contentStyle: {
+      borderRadius: '8px',
+    },
+  },
+
+  TURN_ON_METAMASK_NOTIFICATIONS: {
+    contents: <TurnOnMetamaskNotifications />,
+    mobileModalStyle: {
+      ...modalContainerMobileStyle,
+    },
+    laptopModalStyle: {
+      ...modalContainerLaptopStyle,
+    },
+    contentStyle: {
+      borderRadius: '8px',
+    },
+  },
+
   DEFAULT: {
     contents: [],
     mobileModalStyle: {},
@@ -296,6 +366,9 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
+  ///: BEGIN:ONLY_INCLUDE_IF(build-mmi)
+  const mmiActions = mmiActionsFactory();
+  ///: END:ONLY_INCLUDE_IF
   return {
     hideModal: (customOnHideOpts) => {
       dispatch(actions.hideModal());
@@ -306,15 +379,29 @@ function mapDispatchToProps(dispatch) {
     hideWarning: () => {
       dispatch(actions.hideWarning());
     },
+    ///: BEGIN:ONLY_INCLUDE_IF(build-mmi)
+    setWaitForConfirmDeepLinkDialog: (wait) =>
+      dispatch(mmiActions.setWaitForConfirmDeepLinkDialog(wait)),
+    ///: END:ONLY_INCLUDE_IF
   };
 }
 
+/**
+ * @deprecated The `<Modal />` and the dispatch method of displaying modals has been deprecated in favor of local state and the `<Modal>` component from the component-library.
+ * Please update your code to use the new `<Modal>` component instead, which can be found at ui/components/component-library/modal/modal.tsx.
+ * You can find documentation for the new Modal component in the MetaMask Storybook:
+ * {@link https://metamask.github.io/metamask-storybook/?path=/docs/components-componentlibrary-modal--docs}
+ * If you would like to help with the replacement of the old Modal component, please submit a pull request
+ */
 class Modal extends Component {
   static propTypes = {
     active: PropTypes.bool.isRequired,
     hideModal: PropTypes.func.isRequired,
     hideWarning: PropTypes.func.isRequired,
     modalState: PropTypes.object.isRequired,
+    ///: BEGIN:ONLY_INCLUDE_IF(build-mmi)
+    setWaitForConfirmDeepLinkDialog: PropTypes.func,
+    ///: END:ONLY_INCLUDE_IF
   };
 
   hide() {
@@ -335,7 +422,7 @@ class Modal extends Component {
 
   render() {
     const modal = MODALS[this.props.modalState.name || 'DEFAULT'];
-    const { contents: children, disableBackdropClick = false } = modal;
+    const { contents: children, disableBackdropClick = false, testId } = modal;
     const modalStyle =
       modal[isMobileView() ? 'mobileModalStyle' : 'laptopModalStyle'];
     const contentStyle = modal.contentStyle || {};
@@ -345,6 +432,11 @@ class Modal extends Component {
         keyboard={false}
         onHide={() => {
           if (modal.onHide) {
+            ///: BEGIN:ONLY_INCLUDE_IF(build-mmi)
+            if (this.props.modalState.name === 'CUSTODY_CONFIRM_LINK') {
+              this.props.setWaitForConfirmDeepLinkDialog(false);
+            }
+            ///: END:ONLY_INCLUDE_IF
             modal.onHide({
               hideWarning: this.props.hideWarning,
             });
@@ -358,6 +450,7 @@ class Modal extends Component {
         contentStyle={contentStyle}
         backdropStyle={BACKDROPSTYLE}
         closeOnClick={!disableBackdropClick}
+        testId={testId}
       >
         {children}
       </FadeModal>

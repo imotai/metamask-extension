@@ -1,63 +1,63 @@
 import log from 'loglevel';
-import { transactionMatchesNetwork } from '../../../shared/modules/transaction.utils';
 import { valuesFor } from './util';
 
 export default function txHelper(
+  // TODO: Replace `any` with type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   unapprovedTxs: Record<string, any> | null,
-  unapprovedMsgs: Record<string, any> | null,
+  // TODO: Replace `any` with type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   personalMsgs: Record<string, any> | null,
+  // TODO: Replace `any` with type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   decryptMsgs: Record<string, any> | null,
+  // TODO: Replace `any` with type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   encryptionPublicKeyMsgs: Record<string, any> | null,
+  // TODO: Replace `any` with type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   typedMessages: Record<string, any> | null,
-  network?: string,
   chainId?: string,
+  // TODO: Replace `any` with type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string, any> {
   log.debug('tx-helper called with params:');
   log.debug({
     unapprovedTxs,
-    unapprovedMsgs,
     personalMsgs,
     decryptMsgs,
     encryptionPublicKeyMsgs,
     typedMessages,
-    network,
     chainId,
   });
 
-  const txValues = network
-    ? valuesFor(unapprovedTxs).filter((txMeta) =>
-        transactionMatchesNetwork(txMeta, chainId, network),
-      )
+  const txValues = chainId
+    ? valuesFor(unapprovedTxs).filter((txMeta) => txMeta.chainId === chainId)
     : valuesFor(unapprovedTxs);
-  log.debug(`tx helper found ${txValues.length} unapproved txs`);
-
-  const msgValues = valuesFor(unapprovedMsgs);
-  log.debug(`tx helper found ${msgValues.length} unsigned messages`);
-  let allValues = txValues.concat(msgValues);
 
   const personalValues = valuesFor(personalMsgs);
+  const decryptValues = valuesFor(decryptMsgs);
+  const encryptionPublicKeyValues = valuesFor(encryptionPublicKeyMsgs);
+  const typedValues = valuesFor(typedMessages);
+
+  const allValues = txValues
+    .concat(personalValues)
+    .concat(decryptValues)
+    .concat(encryptionPublicKeyValues)
+    .concat(typedValues)
+    .sort((a, b) => {
+      return a.time - b.time;
+    });
+
+  log.debug(`tx helper found ${txValues.length} unapproved txs`);
   log.debug(
     `tx helper found ${personalValues.length} unsigned personal messages`,
   );
-  allValues = allValues.concat(personalValues);
-
-  const decryptValues = valuesFor(decryptMsgs);
   log.debug(`tx helper found ${decryptValues.length} decrypt requests`);
-  allValues = allValues.concat(decryptValues);
-
-  const encryptionPublicKeyValues = valuesFor(encryptionPublicKeyMsgs);
   log.debug(
     `tx helper found ${encryptionPublicKeyValues.length} encryptionPublicKey requests`,
   );
-  allValues = allValues.concat(encryptionPublicKeyValues);
-
-  const typedValues = valuesFor(typedMessages);
   log.debug(`tx helper found ${typedValues.length} unsigned typed messages`);
-  allValues = allValues.concat(typedValues);
-
-  allValues = allValues.sort((a, b) => {
-    return a.time - b.time;
-  });
 
   return allValues;
 }

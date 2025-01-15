@@ -3,9 +3,9 @@ const fs = require('fs-extra');
 const watch = require('gulp-watch');
 const glob = require('fast-glob');
 
-const locales = require('../../app/_locales/index.json');
-const { BuildType } = require('../lib/build-type');
+const { loadBuildTypesConfig } = require('../lib/build-type');
 
+const { isManifestV3 } = require('../../shared/modules/mv3.utils');
 const { TASKS } = require('./constants');
 const { createTask, composeSeries } = require('./task');
 const { getPathInsideNodeModules } = require('./utils');
@@ -22,6 +22,10 @@ module.exports = function createStaticAssetTasks({
   const copyTargetsProds = {};
   const copyTargetsDevs = {};
 
+  const buildConfig = loadBuildTypesConfig();
+
+  const activeFeatures = buildConfig.buildTypes[buildType].features ?? [];
+
   browserPlatforms.forEach((browser) => {
     const [copyTargetsProd, copyTargetsDev] = getCopyTargets(
       shouldIncludeLockdown,
@@ -31,41 +35,19 @@ module.exports = function createStaticAssetTasks({
     copyTargetsDevs[browser] = copyTargetsDev;
   });
 
-  const additionalBuildTargets = {
-    [BuildType.beta]: [
-      {
-        src: './app/build-types/beta/images/',
-        dest: `images`,
-      },
-    ],
-    [BuildType.flask]: [
-      {
-        src: './app/build-types/flask/images/',
-        dest: `images`,
-      },
-    ],
-    [BuildType.desktop]: [
-      {
-        src: './app/build-types/desktop/images/',
-        dest: `images`,
-      },
-    ],
-    [BuildType.mmi]: [
-      {
-        src: './app/build-types/mmi/images/',
-        dest: `images`,
-      },
-    ],
-  };
+  const additionalAssets = activeFeatures.flatMap(
+    (feature) =>
+      buildConfig.features[feature].assets?.filter(
+        (asset) => !('exclusiveInclude' in asset),
+      ) ?? [],
+  );
 
-  if (Object.keys(additionalBuildTargets).includes(buildType)) {
-    Object.entries(copyTargetsProds).forEach(([_, copyTargetsProd]) =>
-      copyTargetsProd.push(...additionalBuildTargets[buildType]),
-    );
-    Object.entries(copyTargetsDevs).forEach(([_, copyTargetsDev]) =>
-      copyTargetsDev.push(...additionalBuildTargets[buildType]),
-    );
-  }
+  Object.entries(copyTargetsProds).forEach(([_, copyTargetsProd]) =>
+    copyTargetsProd.push(...additionalAssets),
+  );
+  Object.entries(copyTargetsDevs).forEach(([_, copyTargetsDev]) =>
+    copyTargetsDev.push(...additionalAssets),
+  );
 
   const prodTasks = [];
   Object.entries(copyTargetsProds).forEach(([browser, copyTargetsProd]) => {
@@ -120,7 +102,7 @@ module.exports = function createStaticAssetTasks({
     await Promise.all(
       sources.map(async (src) => {
         const relativePath = path.relative(baseDir, src);
-        await fs.copy(src, `${dest}${relativePath}`);
+        await fs.copy(src, `${dest}${relativePath}`, { overwrite: true });
       }),
     );
   }
@@ -141,7 +123,7 @@ function getCopyTargets(shouldIncludeLockdown, shouldIncludeSnow) {
       dest: `images/contract`,
     },
     {
-      src: `./app/fonts/`,
+      src: `./ui/css/utilities/fonts/`,
       dest: `fonts`,
     },
     {
@@ -153,85 +135,84 @@ function getCopyTargets(shouldIncludeLockdown, shouldIncludeSnow) {
         '@fortawesome/fontawesome-free',
         'webfonts/',
       ),
+      // update this location in styles.js if it changes
       dest: `fonts/fontawesome`,
-    },
-    {
-      src: getPathInsideNodeModules('react-responsive-carousel', 'lib/styles/'),
-      dest: 'react-gallery/',
     },
     {
       src: `./ui/css/output/`,
       pattern: `*.css`,
       dest: ``,
     },
-    {
-      src: `./app/loading.html`,
-      dest: `loading.html`,
-    },
-    {
-      src: getPathInsideNodeModules('globalthis', 'dist/browser.js'),
-      dest: `globalthis.js`,
-    },
-    {
-      src: shouldIncludeSnow
-        ? `./node_modules/@lavamoat/snow/snow.prod.js`
-        : EMPTY_JS_FILE,
-      dest: `snow.js`,
-    },
-    {
-      src: shouldIncludeSnow ? `./app/scripts/use-snow.js` : EMPTY_JS_FILE,
-      dest: `use-snow.js`,
-    },
+    ...(shouldIncludeSnow
+      ? [
+          {
+            src: `./node_modules/@lavamoat/snow/snow.prod.js`,
+            dest: `scripts/snow.js`,
+          },
+          {
+            src: `./app/scripts/use-snow.js`,
+            dest: `scripts/use-snow.js`,
+          },
+        ]
+      : []),
     {
       src: shouldIncludeLockdown
         ? getPathInsideNodeModules('ses', 'dist/lockdown.umd.min.js')
         : EMPTY_JS_FILE,
-      dest: `lockdown-install.js`,
+      dest: `scripts/lockdown-install.js`,
     },
     {
       src: './app/scripts/init-globals.js',
-      dest: 'init-globals.js',
+      dest: 'scripts/init-globals.js',
     },
     {
       src: shouldIncludeLockdown
         ? `./app/scripts/lockdown-run.js`
         : EMPTY_JS_FILE,
-      dest: `lockdown-run.js`,
+      dest: `scripts/lockdown-run.js`,
     },
     {
       src: shouldIncludeLockdown
         ? `./app/scripts/lockdown-more.js`
         : EMPTY_JS_FILE,
-      dest: `lockdown-more.js`,
+      dest: `scripts/lockdown-more.js`,
     },
     {
       src: getPathInsideNodeModules('@lavamoat/lavapack', 'src/runtime-cjs.js'),
-      dest: `runtime-cjs.js`,
+      dest: `scripts/runtime-cjs.js`,
       pattern: '',
     },
     {
       src: getPathInsideNodeModules('@lavamoat/lavapack', 'src/runtime.js'),
-      dest: `runtime-lavamoat.js`,
+      dest: `scripts/runtime-lavamoat.js`,
       pattern: '',
     },
+    {
+      src: getPathInsideNodeModules('@blockaid/ppom_release', '/'),
+      pattern: '*.wasm',
+      dest: isManifestV3 ? 'scripts/' : '',
+    },
+    ...(isManifestV3
+      ? [
+          {
+            src: getPathInsideNodeModules(
+              '@metamask/snaps-execution-environments',
+              'dist/browserify/iframe/index.html',
+            ),
+            dest: `snaps/index.html`,
+            pattern: '',
+          },
+          {
+            src: getPathInsideNodeModules(
+              '@metamask/snaps-execution-environments',
+              'dist/browserify/iframe/bundle.js',
+            ),
+            dest: `snaps/bundle.js`,
+            pattern: '',
+          },
+        ]
+      : []),
   ];
-
-  const languageTags = new Set();
-  for (const locale of locales) {
-    const { code } = locale;
-    const tag = code.split('_')[0];
-    languageTags.add(tag);
-  }
-
-  for (const tag of languageTags) {
-    allCopyTargets.push({
-      src: getPathInsideNodeModules(
-        '@formatjs/intl-relativetimeformat',
-        `dist/locale-data/${tag}.json`,
-      ),
-      dest: `intl/${tag}/relative-time-format-data.json`,
-    });
-  }
 
   const copyTargetsDev = [
     ...allCopyTargets,

@@ -8,8 +8,21 @@ process.env.IN_TEST = true;
 process.env.METAMASK_BUILD_TYPE = 'main';
 
 global.chrome = {
-  runtime: { id: 'testid', getManifest: () => ({ manifest_version: 2 }) },
+  runtime: {
+    id: 'testid',
+    getManifest: () => ({ manifest_version: 2 }),
+    sendMessage: () => {
+      // no-op
+    },
+    onMessage: {
+      addListener: () => {
+        // no-op
+      },
+    },
+  },
 };
+
+global.indexedDB = {};
 
 nock.disableNetConnect();
 nock.enableNetConnect('localhost');
@@ -73,13 +86,15 @@ const popoverContent = window.document.createElement('div');
 popoverContent.setAttribute('id', 'popover-content');
 window.document.body.appendChild(popoverContent);
 
-// fetch
+// Fetch
 // fetch is part of node js in future versions, thus triggering no-shadow
 // eslint-disable-next-line no-shadow
-const fetch = require('node-fetch');
+const { default: fetch, Headers, Request, Response } = require('node-fetch');
 
-const { Headers, Request, Response } = fetch;
 Object.assign(window, { fetch, Headers, Request, Response });
+// some of our libraries currently assume that `fetch` is globally available,
+// so we need to assign this for tests to run
+global.fetch = fetch;
 
 // localStorage
 window.localStorage = {
@@ -98,7 +113,7 @@ if (!window.crypto) {
 }
 if (!window.crypto.getRandomValues) {
   // eslint-disable-next-line node/global-require
-  window.crypto.getRandomValues = require('polyfill-crypto.getrandomvalues');
+  window.crypto.getRandomValues = require('crypto').webcrypto.getRandomValues;
 }
 
 // TextEncoder/TextDecoder
@@ -112,3 +127,8 @@ if (!window.navigator.clipboard) {
 if (!window.navigator.clipboard.writeText) {
   window.navigator.clipboard.writeText = () => undefined;
 }
+
+window.SVGPathElement = window.SVGPathElement || { prototype: {} };
+
+// scrollIntoView is not available in JSDOM
+window.HTMLElement.prototype.scrollIntoView = () => undefined;

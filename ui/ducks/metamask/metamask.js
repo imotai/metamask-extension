@@ -1,36 +1,39 @@
 import { addHexPrefix, isHexString } from 'ethereumjs-util';
-import * as actionConstants from '../../store/actionConstants';
+import { createSelector } from 'reselect';
+import { mergeGasFeeEstimates } from '@metamask/transaction-controller';
+import { RpcEndpointType } from '@metamask/network-controller';
 import { AlertTypes } from '../../../shared/constants/alerts';
 import {
   GasEstimateTypes,
   NetworkCongestionThresholds,
 } from '../../../shared/constants/gas';
+import { KeyringType } from '../../../shared/constants/keyring';
+import { DEFAULT_AUTO_LOCK_TIME_LIMIT } from '../../../shared/constants/preferences';
+import { decGWEIToHexWEI } from '../../../shared/modules/conversion.utils';
+import { stripHexPrefix } from '../../../shared/modules/hexstring-utils';
+import { isEqualCaseInsensitive } from '../../../shared/modules/string-utils';
 import {
   accountsWithSendEtherInfoSelector,
   checkNetworkAndAccountSupports1559,
   getAddressBook,
-  getUseCurrencyRateCheck,
-} from '../../selectors';
+  getSelectedNetworkClientId,
+  getNetworkConfigurationsByChainId,
+} from '../../selectors/selectors';
+import { getSelectedInternalAccount } from '../../selectors/accounts';
+import * as actionConstants from '../../store/actionConstants';
 import { updateTransactionGasFees } from '../../store/actions';
 import { setCustomGasLimit, setCustomGasPrice } from '../gas/gas.duck';
-
-import { HardwareKeyringTypes } from '../../../shared/constants/hardware-wallets';
-import { isEqualCaseInsensitive } from '../../../shared/modules/string-utils';
-import { stripHexPrefix } from '../../../shared/modules/hexstring-utils';
-import {
-  decGWEIToHexWEI,
-  hexToDecimal,
-} from '../../../shared/modules/conversion.utils';
 
 const initialState = {
   isInitialized: false,
   isUnlocked: false,
   isAccountMenuOpen: false,
-  identities: {},
-  unapprovedTxs: {},
+  isNetworkMenuOpen: false,
+  internalAccounts: { accounts: {}, selectedAccount: '' },
+  transactions: [],
   networkConfigurations: {},
   addressBook: [],
-  contractExchangeRates: {},
+  confirmationExchangeRates: {},
   pendingTokens: {},
   customNonceValue: '',
   useBlockie: false,
@@ -38,19 +41,30 @@ const initialState = {
   welcomeScreenSeen: false,
   currentLocale: '',
   currentBlockGasLimit: '',
+  currentBlockGasLimitByChainId: {},
   preferences: {
-    autoLockTimeLimit: undefined,
+    autoLockTimeLimit: DEFAULT_AUTO_LOCK_TIME_LIMIT,
+    showExtensionInFullSizeView: false,
     showFiatInTestnets: false,
     showTestNetworks: false,
-    useNativeCurrencyAsPrimaryCurrency: true,
+    smartTransactionsOptInStatus: true,
+    petnamesEnabled: true,
+    featureNotificationsEnabled: false,
+    privacyMode: false,
+    showMultiRpcModal: false,
   },
   firstTimeFlowType: null,
   completedOnboarding: false,
   knownMethodData: {},
+  use4ByteResolution: true,
   participateInMetaMetrics: null,
+  dataCollectionForMarketing: null,
   nextNonce: null,
-  conversionRate: null,
-  nativeCurrency: 'ETH',
+  currencyRates: {
+    ETH: {
+      conversionRate: null,
+    },
+  },
 };
 
 /**
@@ -84,10 +98,26 @@ export default function reduceMetamask(state = initialState, action) {
     case actionConstants.SET_ACCOUNT_LABEL: {
       const { account } = action.value;
       const name = action.value.label;
-      const id = {};
-      id[account] = { ...metamaskState.identities[account], name };
-      const identities = { ...metamaskState.identities, ...id };
-      return Object.assign(metamaskState, { identities });
+      const accountToUpdate = Object.values(
+        metamaskState.internalAccounts.accounts,
+      ).find((internalAccount) => {
+        return internalAccount.address.toLowerCase() === account.toLowerCase();
+      });
+
+      const internalAccounts = {
+        ...metamaskState.internalAccounts,
+        accounts: {
+          ...metamaskState.internalAccounts.accounts,
+          [accountToUpdate.id]: {
+            ...accountToUpdate,
+            metadata: {
+              ...accountToUpdate.metadata,
+              name,
+            },
+          },
+        },
+      };
+      return Object.assign(metamaskState, { internalAccounts });
     }
 
     case actionConstants.UPDATE_CUSTOM_NONCE:
@@ -102,10 +132,16 @@ export default function reduceMetamask(state = initialState, action) {
         isAccountMenuOpen: !metamaskState.isAccountMenuOpen,
       };
 
+    case actionConstants.TOGGLE_NETWORK_MENU:
+      return {
+        ...metamaskState,
+        isNetworkMenuOpen: !metamaskState.isNetworkMenuOpen,
+      };
+
     case actionConstants.UPDATE_TRANSACTION_PARAMS: {
       const { id: txId, value } = action;
-      let { currentNetworkTxList } = metamaskState;
-      currentNetworkTxList = currentNetworkTxList.map((tx) => {
+      let { transactions } = metamaskState;
+      transactions = transactions.map((tx) => {
         if (tx.id === txId) {
           const newTx = { ...tx };
           newTx.txParams = value;
@@ -116,7 +152,7 @@ export default function reduceMetamask(state = initialState, action) {
 
       return {
         ...metamaskState,
-        currentNetworkTxList,
+        transactions,
       };
     }
 
@@ -124,6 +160,12 @@ export default function reduceMetamask(state = initialState, action) {
       return {
         ...metamaskState,
         participateInMetaMetrics: action.value,
+      };
+
+    case actionConstants.SET_DATA_COLLECTION_FOR_MARKETING:
+      return {
+        ...metamaskState,
+        dataCollectionForMarketing: action.value,
       };
 
     case actionConstants.CLOSE_WELCOME_SCREEN:
@@ -152,6 +194,19 @@ export default function reduceMetamask(state = initialState, action) {
       };
     }
 
+    case actionConstants.RESET_ONBOARDING: {
+      return {
+        ...metamaskState,
+        completedOnboarding: false,
+        firstTimeFlowType: null,
+        isInitialized: false,
+        isUnlocked: false,
+        onboardingTabs: {},
+        seedPhraseBackedUp: null,
+        welcomeScreenSeen: false,
+      };
+    }
+
     case actionConstants.SET_FIRST_TIME_FLOW_TYPE: {
       return {
         ...metamaskState,
@@ -165,15 +220,11 @@ export default function reduceMetamask(state = initialState, action) {
         nextNonce: action.payload,
       };
     }
-
-    ///: BEGIN:ONLY_INCLUDE_IN(flask)
-    case actionConstants.FORCE_DISABLE_DESKTOP: {
+    case actionConstants.SET_CONFIRMATION_EXCHANGE_RATES:
       return {
         ...metamaskState,
-        desktopEnabled: false,
+        confirmationExchangeRates: action.value,
       };
-    }
-    ///: END:ONLY_INCLUDE_IN
 
     default:
       return metamaskState;
@@ -223,6 +274,42 @@ export function updateGasFees({
 
 export const getAlertEnabledness = (state) => state.metamask.alertEnabledness;
 
+/**
+ * Get the provider configuration for the current selected network.
+ *
+ * @param {object} state - Redux state object.
+ */
+export const getProviderConfig = createSelector(
+  (state) => getNetworkConfigurationsByChainId(state),
+  (state) => getSelectedNetworkClientId(state),
+  (networkConfigurationsByChainId, selectedNetworkClientId) => {
+    for (const network of Object.values(networkConfigurationsByChainId)) {
+      for (const rpcEndpoint of network.rpcEndpoints) {
+        if (rpcEndpoint.networkClientId === selectedNetworkClientId) {
+          const blockExplorerUrl =
+            network.blockExplorerUrls?.[network.defaultBlockExplorerUrlIndex];
+
+          return {
+            chainId: network.chainId,
+            ticker: network.nativeCurrency,
+            rpcPrefs: { ...(blockExplorerUrl && { blockExplorerUrl }) },
+            type:
+              rpcEndpoint.type === RpcEndpointType.Custom
+                ? 'rpc'
+                : rpcEndpoint.networkClientId,
+            ...(rpcEndpoint.type === RpcEndpointType.Custom && {
+              id: rpcEndpoint.networkClientId,
+              nickname: network.name,
+              rpcUrl: rpcEndpoint.url,
+            }),
+          };
+        }
+      }
+    }
+    return undefined; // should not be reachable
+  },
+);
+
 export const getUnconnectedAccountAlertEnabledness = (state) =>
   getAlertEnabledness(state)[AlertTypes.unconnectedAccount];
 
@@ -242,45 +329,35 @@ export function getNftsDropdownState(state) {
 
 export const getNfts = (state) => {
   const {
-    metamask: {
-      allNfts,
-      provider: { chainId },
-      selectedAddress,
-    },
+    metamask: { allNfts },
   } = state;
+  const { address: selectedAddress } = getSelectedInternalAccount(state);
 
-  const chainIdAsDecimal = hexToDecimal(chainId);
+  const { chainId } = getProviderConfig(state);
 
-  return allNfts?.[selectedAddress]?.[chainIdAsDecimal] ?? [];
+  return allNfts?.[selectedAddress]?.[chainId] ?? [];
 };
 
 export const getNftContracts = (state) => {
   const {
-    metamask: {
-      allNftContracts,
-      provider: { chainId },
-      selectedAddress,
-    },
+    metamask: { allNftContracts },
   } = state;
-
-  const chainIdAsDecimal = hexToDecimal(chainId);
-
-  return allNftContracts?.[selectedAddress]?.[chainIdAsDecimal] ?? [];
+  const { address: selectedAddress } = getSelectedInternalAccount(state);
+  const { chainId } = getProviderConfig(state);
+  return allNftContracts?.[selectedAddress]?.[chainId] ?? [];
 };
 
 export function getBlockGasLimit(state) {
   return state.metamask.currentBlockGasLimit;
 }
 
-export function getConversionRate(state) {
-  return state.metamask.conversionRate;
+export function getNativeCurrency(state) {
+  return getProviderConfig(state).ticker;
 }
 
-export function getNativeCurrency(state) {
-  const useCurrencyRateCheck = getUseCurrencyRateCheck(state);
-  return useCurrencyRateCheck
-    ? state.metamask.nativeCurrency
-    : state.metamask.provider.ticker;
+export function getConversionRate(state) {
+  return state.metamask.currencyRates[getProviderConfig(state).ticker]
+    ?.conversionRate;
 }
 
 export function getSendHexDataFeatureFlagState(state) {
@@ -293,38 +370,130 @@ export function getSendToAccounts(state) {
   return [...fromAccounts, ...addressBookAccounts];
 }
 
-export function getUnapprovedTxs(state) {
-  return state.metamask.unapprovedTxs;
-}
-
 /**
  * Function returns true if network details are fetched and it is found to not support EIP-1559
  *
  * @param state
  */
 export function isNotEIP1559Network(state) {
-  return state.metamask.networkDetails?.EIPS[1559] === false;
+  const selectedNetworkClientId = getSelectedNetworkClientId(state);
+  return (
+    state.metamask.networksMetadata[selectedNetworkClientId].EIPS[1559] ===
+    false
+  );
 }
 
 /**
  * Function returns true if network details are fetched and it is found to support EIP-1559
  *
  * @param state
+ * @param networkClientId - The optional network client ID to check for EIP-1559 support. Defaults to the currently selected network.
  */
-export function isEIP1559Network(state) {
-  return state.metamask.networkDetails?.EIPS[1559] === true;
+export function isEIP1559Network(state, networkClientId) {
+  const selectedNetworkClientId = getSelectedNetworkClientId(state);
+
+  return (
+    state.metamask.networksMetadata?.[
+      networkClientId ?? selectedNetworkClientId
+    ].EIPS[1559] === true
+  );
 }
 
-export function getGasEstimateType(state) {
+function getGasFeeControllerEstimateType(state) {
   return state.metamask.gasEstimateType;
 }
 
-export function getGasFeeEstimates(state) {
+function getGasFeeControllerEstimateTypeByChainId(state, chainId) {
+  return state.metamask.gasFeeEstimatesByChainId?.[chainId]?.gasEstimateType;
+}
+
+function getGasFeeControllerEstimates(state) {
   return state.metamask.gasFeeEstimates;
 }
 
+function getGasFeeControllerEstimatesByChainId(state, chainId) {
+  return state.metamask.gasFeeEstimatesByChainId?.[chainId]?.gasFeeEstimates;
+}
+
+function getTransactionGasFeeEstimates(state) {
+  const transactionMetadata = state.confirmTransaction?.txData;
+  return transactionMetadata?.gasFeeEstimates;
+}
+
+function getTransactionGasFeeEstimatesByChainId(state, chainId) {
+  const transactionMetadata = state.confirmTransaction?.txData;
+  const transactionChainId = transactionMetadata?.chainId;
+
+  if (transactionChainId !== chainId) {
+    return undefined;
+  }
+
+  return transactionMetadata?.gasFeeEstimates;
+}
+
+const getTransactionGasFeeEstimateType = createSelector(
+  getTransactionGasFeeEstimates,
+  (transactionGasFeeEstimates) => transactionGasFeeEstimates?.type,
+);
+
+const getTransactionGasFeeEstimateTypeByChainId = createSelector(
+  getTransactionGasFeeEstimatesByChainId,
+  (transactionGasFeeEstimates) => transactionGasFeeEstimates?.type,
+);
+
+export const getGasEstimateType = createSelector(
+  getGasFeeControllerEstimateType,
+  getTransactionGasFeeEstimateType,
+  (gasFeeControllerEstimateType, transactionGasFeeEstimateType) => {
+    return transactionGasFeeEstimateType ?? gasFeeControllerEstimateType;
+  },
+);
+
+export const getGasEstimateTypeByChainId = createSelector(
+  getGasFeeControllerEstimateTypeByChainId,
+  getTransactionGasFeeEstimateTypeByChainId,
+  (gasFeeControllerEstimateType, transactionGasFeeEstimateType) => {
+    return transactionGasFeeEstimateType ?? gasFeeControllerEstimateType;
+  },
+);
+
+export const getGasFeeEstimatesByChainId = createSelector(
+  getGasFeeControllerEstimatesByChainId,
+  getTransactionGasFeeEstimatesByChainId,
+  (gasFeeControllerEstimates, transactionGasFeeEstimates) => {
+    if (transactionGasFeeEstimates) {
+      return mergeGasFeeEstimates({
+        gasFeeControllerEstimates,
+        transactionGasFeeEstimates,
+      });
+    }
+
+    return gasFeeControllerEstimates;
+  },
+);
+
+export const getGasFeeEstimates = createSelector(
+  getGasFeeControllerEstimates,
+  getTransactionGasFeeEstimates,
+  (gasFeeControllerEstimates, transactionGasFeeEstimates) => {
+    if (transactionGasFeeEstimates) {
+      return mergeGasFeeEstimates({
+        gasFeeControllerEstimates,
+        transactionGasFeeEstimates,
+      });
+    }
+
+    return gasFeeControllerEstimates;
+  },
+);
+
 export function getEstimatedGasFeeTimeBounds(state) {
   return state.metamask.estimatedGasFeeTimeBounds;
+}
+
+export function getEstimatedGasFeeTimeBoundsByChainId(state, chainId) {
+  return state.metamask.gasFeeEstimatesByChainId?.[chainId]
+    ?.estimatedGasFeeTimeBounds;
 }
 
 export function getIsGasEstimatesLoading(state) {
@@ -347,8 +516,33 @@ export function getIsGasEstimatesLoading(state) {
   return isGasEstimatesLoading;
 }
 
-export function getIsNetworkBusy(state) {
-  const gasFeeEstimates = getGasFeeEstimates(state);
+export function getIsGasEstimatesLoadingByChainId(
+  state,
+  { chainId, networkClientId },
+) {
+  const networkAndAccountSupports1559 = checkNetworkAndAccountSupports1559(
+    state,
+    networkClientId,
+  );
+  const gasEstimateType = getGasEstimateTypeByChainId(state, chainId);
+
+  // We consider the gas estimate to be loading if the gasEstimateType is
+  // 'NONE' or if the current gasEstimateType cannot be supported by the current
+  // network
+  const isEIP1559TolerableEstimateType =
+    gasEstimateType === GasEstimateTypes.feeMarket ||
+    gasEstimateType === GasEstimateTypes.ethGasPrice;
+  const isGasEstimatesLoading =
+    gasEstimateType === GasEstimateTypes.none ||
+    (networkAndAccountSupports1559 && !isEIP1559TolerableEstimateType) ||
+    (!networkAndAccountSupports1559 &&
+      gasEstimateType === GasEstimateTypes.feeMarket);
+
+  return isGasEstimatesLoading;
+}
+
+export function getIsNetworkBusyByChainId(state, chainId) {
+  const gasFeeEstimates = getGasFeeEstimatesByChainId(state, chainId);
   return gasFeeEstimates?.networkCongestion >= NetworkCongestionThresholds.busy;
 }
 
@@ -391,7 +585,7 @@ export function findKeyringForAddress(state, address) {
  * Given the redux state object, returns the users preferred ledger transport type
  *
  * @param {object} state - the redux state object
- * @returns {string} The users preferred ledger transport type. One of'ledgerLive', 'webhid' or 'u2f'
+ * @returns {string} The users preferred ledger transport type. One of 'webhid' on chrome or 'u2f' on firefox
  */
 export function getLedgerTransportType(state) {
   return state.metamask.ledgerTransportType;
@@ -407,7 +601,7 @@ export function getLedgerTransportType(state) {
 export function isAddressLedger(state, address) {
   const keyring = findKeyringForAddress(state, address);
 
-  return keyring?.type === HardwareKeyringTypes.ledger;
+  return keyring?.type === KeyringType.ledger;
 }
 
 /**
@@ -419,6 +613,6 @@ export function isAddressLedger(state, address) {
  */
 export function doesUserHaveALedgerAccount(state) {
   return state.metamask.keyrings.some((kr) => {
-    return kr.type === HardwareKeyringTypes.ledger;
+    return kr.type === KeyringType.ledger;
   });
 }

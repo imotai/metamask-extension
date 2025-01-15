@@ -3,44 +3,40 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { getBlockExplorerLink } from '@metamask/etherscan-link';
 import { isEqual } from 'lodash';
-
 import { I18nContext } from '../../../contexts/i18n';
 import {
   getFetchParams,
   prepareToLeaveSwaps,
   getCurrentSmartTransactions,
-  getSelectedQuote,
-  getTopQuote,
-  getSmartTransactionsOptInStatus,
-  getSmartTransactionsEnabled,
   getCurrentSmartTransactionsEnabled,
   getSwapsNetworkConfig,
   cancelSwapsSmartTransaction,
+  getUsedQuote,
 } from '../../../ducks/swaps/swaps';
 import {
   isHardwareWallet,
   getHardwareWalletType,
   getCurrentChainId,
-  getUSDConversionRate,
-  conversionRateSelector,
-  getCurrentCurrency,
   getRpcPrefsForCurrentProvider,
 } from '../../../selectors';
-import { SWAPS_CHAINID_DEFAULT_BLOCK_EXPLORER_URL_MAP } from '../../../../shared/constants/swaps';
-import { getNativeCurrency } from '../../../ducks/metamask/metamask';
+import {
+  getSmartTransactionsEnabled,
+  getSmartTransactionsOptInStatusForMetrics,
+} from '../../../../shared/modules/selectors';
+import { CHAINID_DEFAULT_BLOCK_EXPLORER_URL_MAP } from '../../../../shared/constants/common';
 import {
   DEFAULT_ROUTE,
-  BUILD_QUOTE_ROUTE,
+  PREPARE_SWAP_ROUTE,
 } from '../../../helpers/constants/routes';
-import Typography from '../../../components/ui/typography';
+import { Text } from '../../../components/component-library';
 import Box from '../../../components/ui/box';
 import UrlIcon from '../../../components/ui/url-icon';
 import {
   BLOCK_SIZES,
-  TypographyVariant,
+  TextVariant,
   JustifyContent,
   DISPLAY,
-  FONT_WEIGHT,
+  FontWeight,
   AlignItems,
   TextColor,
 } from '../../../helpers/constants/design-system';
@@ -48,14 +44,11 @@ import {
   stopPollingForQuotes,
   setBackgroundSwapRouteState,
 } from '../../../store/actions';
-import { EVENT } from '../../../../shared/constants/metametrics';
+import { MetaMetricsEventCategory } from '../../../../shared/constants/metametrics';
 import { SmartTransactionStatus } from '../../../../shared/constants/transaction';
 
 import SwapsFooter from '../swaps-footer';
-import {
-  showRemainingTimeInMinAndSec,
-  getFeeForSmartTransaction,
-} from '../swaps.util';
+import { showRemainingTimeInMinAndSec } from '../swaps.util';
 import { MetaMetricsContext } from '../../../contexts/metametrics';
 import CreateNewSwap from '../create-new-swap';
 import ViewOnBlockExplorer from '../view-on-block-explorer';
@@ -80,15 +73,10 @@ export default function SmartTransactionStatusPage() {
   const hardwareWalletUsed = useSelector(isHardwareWallet);
   const hardwareWalletType = useSelector(getHardwareWalletType);
   const needsTwoConfirmations = true;
-  const selectedQuote = useSelector(getSelectedQuote, isEqual);
-  const topQuote = useSelector(getTopQuote, isEqual);
-  const usedQuote = selectedQuote || topQuote;
+  const usedQuote = useSelector(getUsedQuote, isEqual);
   const currentSmartTransactions = useSelector(
     getCurrentSmartTransactions,
     isEqual,
-  );
-  const smartTransactionsOptInStatus = useSelector(
-    getSmartTransactionsOptInStatus,
   );
   const chainId = useSelector(getCurrentChainId);
   const rpcPrefs = useSelector(getRpcPrefsForCurrentProvider, shallowEqual);
@@ -99,12 +87,8 @@ export default function SmartTransactionStatusPage() {
   );
   const baseNetworkUrl =
     rpcPrefs.blockExplorerUrl ??
-    SWAPS_CHAINID_DEFAULT_BLOCK_EXPLORER_URL_MAP[chainId] ??
+    CHAINID_DEFAULT_BLOCK_EXPLORER_URL_MAP[chainId] ??
     null;
-  const nativeCurrencySymbol = useSelector(getNativeCurrency);
-  const conversionRate = useSelector(conversionRateSelector);
-  const USDConversionRate = useSelector(getUSDConversionRate);
-  const currentCurrency = useSelector(getCurrentCurrency);
 
   let smartTransactionStatus = SmartTransactionStatus.pending;
   let latestSmartTransaction = {};
@@ -120,7 +104,6 @@ export default function SmartTransactionStatusPage() {
     cancellationFeeWei =
       latestSmartTransaction?.statusMetadata?.cancellationFeeWei;
   }
-
   const [timeLeftForPendingStxInSec, setTimeLeftForPendingStxInSec] = useState(
     swapsNetworkConfig.stxStatusDeadline,
   );
@@ -142,7 +125,7 @@ export default function SmartTransactionStatusPage() {
     hardware_wallet_type: hardwareWalletType,
     stx_enabled: smartTransactionsEnabled,
     current_stx_enabled: currentSmartTransactionsEnabled,
-    stx_user_opt_in: smartTransactionsOptInStatus,
+    stx_user_opt_in: useSelector(getSmartTransactionsOptInStatusForMetrics),
   };
 
   let destinationValue;
@@ -165,7 +148,7 @@ export default function SmartTransactionStatusPage() {
   useEffect(() => {
     trackEvent({
       event: 'STX Status Page Loaded',
-      category: EVENT.CATEGORIES.SWAPS,
+      category: MetaMetricsEventCategory.Swaps,
       sensitiveProperties,
     });
     // eslint-disable-next-line
@@ -278,17 +261,6 @@ export default function SmartTransactionStatusPage() {
     latestSmartTransaction.cancellable && !cancelSwapLinkClicked;
 
   const CancelSwap = () => {
-    let feeInFiat;
-    if (cancellationFeeWei > 0) {
-      ({ feeInFiat } = getFeeForSmartTransaction({
-        chainId,
-        currentCurrency,
-        conversionRate,
-        USDConversionRate,
-        nativeCurrencySymbol,
-        feeInWeiDec: cancellationFeeWei,
-      }));
-    }
     return (
       <Box marginBottom={0}>
         <a
@@ -299,15 +271,13 @@ export default function SmartTransactionStatusPage() {
             setCancelSwapLinkClicked(true); // We want to hide it after a user clicks on it.
             trackEvent({
               event: 'Cancel STX',
-              category: EVENT.CATEGORIES.SWAPS,
+              category: MetaMetricsEventCategory.Swaps,
               sensitiveProperties,
             });
             dispatch(cancelSwapsSmartTransaction(latestSmartTransactionUuid));
           }}
         >
-          {feeInFiat
-            ? t('cancelSwapForFee', [feeInFiat])
-            : t('cancelSwapForFree')}
+          {t('attemptToCancelSwapForFree')}
         </a>
       </Box>
     );
@@ -330,30 +300,32 @@ export default function SmartTransactionStatusPage() {
           justifyContent={JustifyContent.center}
           alignItems={AlignItems.center}
         >
-          <Typography
+          <Text
             color={TextColor.textAlternative}
-            variant={TypographyVariant.H6}
+            variant={TextVariant.bodySm}
+            as="h6"
           >
             {`${fetchParams?.value && Number(fetchParams.value).toFixed(5)} `}
-          </Typography>
-          <Typography
+          </Text>
+          <Text
             color={TextColor.textAlternative}
-            variant={TypographyVariant.H6}
-            fontWeight={FONT_WEIGHT.BOLD}
-            boxProps={{ marginLeft: 1, marginRight: 2 }}
+            variant={TextVariant.bodySmBold}
+            as="h6"
+            marginLeft={1}
+            marginRight={2}
           >
             {fetchParamsSourceTokenInfo.symbol ??
               latestSmartTransaction?.sourceTokenSymbol}
-          </Typography>
+          </Text>
           {fetchParamsSourceTokenInfo.iconUrl ? (
             <UrlIcon
               url={fetchParamsSourceTokenInfo.iconUrl}
-              className="main-quote-summary__icon"
+              className="smart-transactions-status-summary__icon"
               name={
                 fetchParamsSourceTokenInfo.symbol ??
                 latestSmartTransaction?.destinationTokenSymbol
               }
-              fallbackClassName="main-quote-summary__icon-fallback"
+              fallbackClassName="smart-transactions-status-summary__icon-fallback"
             />
           ) : null}
           <Box display={DISPLAY.BLOCK} marginLeft={2} marginRight={2}>
@@ -362,34 +334,35 @@ export default function SmartTransactionStatusPage() {
           {fetchParamsDestinationTokenInfo.iconUrl ? (
             <UrlIcon
               url={fetchParamsDestinationTokenInfo.iconUrl}
-              className="main-quote-summary__icon"
+              className="smart-transactions-status-summary__icon"
               name={
                 fetchParamsDestinationTokenInfo.symbol ??
                 latestSmartTransaction?.destinationTokenSymbol
               }
-              fallbackClassName="main-quote-summary__icon-fallback"
+              fallbackClassName="smart-transactions-status-summary__icon-fallback"
             />
           ) : null}
-          <Typography
+          <Text
             color={TextColor.textAlternative}
-            variant={TypographyVariant.H6}
-            boxProps={{ marginLeft: 2 }}
+            variant={TextVariant.bodySm}
+            as="h6"
+            marginLeft={2}
           >
             {`~${destinationValue && Number(destinationValue).toFixed(5)} `}
-          </Typography>
-          <Typography
+          </Text>
+          <Text
             color={TextColor.textAlternative}
-            variant={TypographyVariant.H6}
-            fontWeight={FONT_WEIGHT.BOLD}
-            boxProps={{ marginLeft: 1 }}
+            variant={TextVariant.bodySmBold}
+            as="h6"
+            marginLeft={1}
           >
             {fetchParamsDestinationTokenInfo.symbol ??
               latestSmartTransaction?.destinationTokenSymbol}
-          </Typography>
+          </Text>
         </Box>
         <Box
           marginTop={3}
-          className="smart-transaction-status__background-animation smart-transaction-status__background-animation--top"
+          className="smart-transaction-status__spacer-box--top"
         />
         {icon && (
           <Box marginTop={3} marginBottom={2}>
@@ -405,31 +378,34 @@ export default function SmartTransactionStatusPage() {
             alignItems={AlignItems.center}
           >
             <TimerIcon />
-            <Typography
+            <Text
               color={TextColor.textAlternative}
-              variant={TypographyVariant.H6}
-              boxProps={{ marginLeft: 1 }}
+              variant={TextVariant.bodySm}
+              as="h6"
+              marginLeft={1}
             >
               {`${t('stxSwapCompleteIn')} `}
-            </Typography>
-            <Typography
+            </Text>
+            <Text
               color={TextColor.textAlternative}
-              variant={TypographyVariant.H6}
-              fontWeight={FONT_WEIGHT.BOLD}
-              boxProps={{ marginLeft: 1 }}
+              variant={TextVariant.bodySmBold}
+              as="h6"
+              marginLeft={1}
               className="smart-transaction-status__remaining-time"
             >
               {showRemainingTimeInMinAndSec(timeLeftForPendingStxInSec)}
-            </Typography>
+            </Text>
           </Box>
         )}
-        <Typography
+        <Text
+          data-testid="swap-smart-transaction-status-header"
           color={TextColor.textDefault}
-          variant={TypographyVariant.H4}
-          fontWeight={FONT_WEIGHT.BOLD}
+          variant={TextVariant.headingSm}
+          as="h4"
+          fontWeight={FontWeight.Bold}
         >
           {headerText}
-        </Typography>
+        </Text>
         {isSmartTransactionPending && (
           <div className="smart-transaction-status__loading-bar-container">
             <div
@@ -445,13 +421,15 @@ export default function SmartTransactionStatusPage() {
           </div>
         )}
         {description && (
-          <Typography
-            variant={TypographyVariant.H6}
-            boxProps={{ ...(blockExplorerUrl && { margin: [1, 0, 0] }) }}
+          <Text
+            data-testid="swap-smart-transaction-status-description"
+            variant={TextVariant.bodySm}
+            as="h6"
+            marginTop={blockExplorerUrl && 1}
             color={TextColor.textAlternative}
           >
             {description}
-          </Typography>
+          </Text>
         )}
         {blockExplorerUrl && (
           <ViewOnBlockExplorer
@@ -461,16 +439,17 @@ export default function SmartTransactionStatusPage() {
         )}
         <Box
           marginTop={3}
-          className="smart-transaction-status__background-animation smart-transaction-status__background-animation--bottom"
+          className="smart-transaction-status__spacer-box--bottom"
         />
         {subDescription && (
-          <Typography
-            variant={TypographyVariant.H7}
-            boxProps={{ marginTop: 8 }}
+          <Text
+            variant={TextVariant.bodySm}
+            as="h6"
+            marginTop={8}
             color={TextColor.textAlternative}
           >
             {subDescription}
-          </Typography>
+          </Text>
         )}
       </Box>
       {showCancelSwapLink &&
@@ -485,7 +464,7 @@ export default function SmartTransactionStatusPage() {
             await dispatch(prepareToLeaveSwaps());
             history.push(DEFAULT_ROUTE);
           } else {
-            history.push(BUILD_QUOTE_ROUTE);
+            history.push(PREPARE_SWAP_ROUTE);
           }
         }}
         onCancel={async () => {

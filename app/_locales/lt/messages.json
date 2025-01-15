@@ -75,9 +75,6 @@
   "asset": {
     "message": "Turtas"
   },
-  "attemptingConnect": {
-    "message": "Mėginama prisijungti prie „blockchain“."
-  },
   "attributions": {
     "message": "Požymiai"
   },
@@ -92,9 +89,6 @@
   },
   "back": {
     "message": "Grįžti"
-  },
-  "backToAll": {
-    "message": "Atgal prie visų"
   },
   "backupApprovalInfo": {
     "message": "Šis slaptas kodas reikalingas norint atkurti jūsų slaptažodinę, jeigu pamestumėte savo įrenginį, pamirštumėte savo slaptažodį, iš naujo įdiegtumėte „MetaMask“, taip pat norint pasiekti slaptažodinę iš kito įrenginio."
@@ -154,14 +148,14 @@
   "connect": {
     "message": "Prisijungti"
   },
-  "connectHardwareWallet": {
-    "message": "Susieti aparatinės įrangos slaptažodinę"
-  },
   "connectingTo": {
     "message": "Jungiamasi prie $1"
   },
   "connectingToGoerli": {
     "message": "Jungiamasi prie „Goerli“ bandomojo tinklo"
+  },
+  "connectingToLineaGoerli": {
+    "message": "Jungiamasi prie „Linea“ bandomojo tinklo"
   },
   "connectingToMainnet": {
     "message": "Jungiamasi prie pagrindinio „Ethereum“ tinklo"
@@ -178,9 +172,6 @@
   "copyAddress": {
     "message": "Kopijuoti adresą į iškarpinę"
   },
-  "copyPrivateKey": {
-    "message": "Tai yra jūsų asmeninis raktas (spustelėkite, kad nukopijuotumėte)"
-  },
   "copyToClipboard": {
     "message": "Kopijuoti į iškarpinę"
   },
@@ -189,9 +180,6 @@
   },
   "create": {
     "message": "Sukurti"
-  },
-  "createAccount": {
-    "message": "Sukurti paskyrą"
   },
   "createPassword": {
     "message": "Sukurti slaptažodį"
@@ -217,15 +205,6 @@
   "delete": {
     "message": "Ištrinti"
   },
-  "deleteAccount": {
-    "message": "Šalinti paskyrą"
-  },
-  "deleteNetwork": {
-    "message": "Panaikinti tinklą?"
-  },
-  "deleteNetworkDescription": {
-    "message": "Ar tikrai norite panaikinti šį tinklą?"
-  },
   "details": {
     "message": "Išsami informacija"
   },
@@ -247,15 +226,6 @@
   "editContact": {
     "message": "Taisyti kontaktą"
   },
-  "ensNotFoundOnCurrentNetwork": {
-    "message": "ENS pavadinimas dabartiniame tinkle nerastas. Mėginkite perjungti į pagrindinį „Ethereum“ tinklą."
-  },
-  "ensRegistrationError": {
-    "message": "ENS pavadinimo registracijos klaida"
-  },
-  "enterPassword": {
-    "message": "Įveskite slaptažodį"
-  },
   "enterPasswordContinue": {
     "message": "Norėdami tęsti, įveskite slaptažodį"
   },
@@ -268,18 +238,11 @@
   "expandView": {
     "message": "Išskleisti rodinį"
   },
-  "exportPrivateKey": {
-    "message": "Eksportuoti asmeninį raktą"
-  },
   "failed": {
     "message": "Nepavyko"
   },
   "fast": {
     "message": "Greitas"
-  },
-  "fiat": {
-    "message": "Standartinė valiuta",
-    "description": "Exchange type"
   },
   "fileImportFail": {
     "message": "Failo importavimas neveikia? Spustelėkite čia!",
@@ -381,12 +344,6 @@
   "invalidAddressRecipient": {
     "message": "Gavėjo adresas netinkamas"
   },
-  "invalidAddressRecipientNotEthNetwork": {
-    "message": "Ne ETH tinklas, nustatykite į mažąsias raides"
-  },
-  "invalidBlockExplorerURL": {
-    "message": "Netinkamas Block Explorer URL"
-  },
   "invalidRPC": {
     "message": "Netinkamas RPC URL"
   },
@@ -411,6 +368,9 @@
   },
   "likeToImportTokens": {
     "message": "Ar norėtumėte pridėti šiuos žetonus?"
+  },
+  "lineaGoerli": {
+    "message": "„Linea“ bandomasis tinklas"
   },
   "links": {
     "message": "Nuorodos"
@@ -448,9 +408,6 @@
   "mustSelectOne": {
     "message": "Turite pasirinkti bent 1 žetoną."
   },
-  "myAccounts": {
-    "message": "Mano paskyros"
-  },
   "needImportFile": {
     "message": "Turite pasirinkti failą, kurį pageidaujate importuoti.",
     "description": "User is important an account and needs to add a file to continue"
@@ -485,9 +442,6 @@
   },
   "next": {
     "message": "Toliau"
-  },
-  "noAddressForName": {
-    "message": "Šiam pavadinimui nenurodytas adresas."
   },
   "noConversionRateAvailable": {
     "message": "Nėra keitimo kurso"
@@ -550,12 +504,6 @@
   "prev": {
     "message": "Peržiūra"
   },
-  "primaryCurrencySetting": {
-    "message": "Pagrindinė valiuta"
-  },
-  "primaryCurrencySettingDescription": {
-    "message": "Rinkitės vietinę, kad vertės pirmiausia būtų rodomos vietine grandinės valiuta (pvz., ETH). Rinkitės standartinę, kad vertės pirmiausia būtų rodomos jūsų pasirinkta standartine valiuta."
-  },
   "privacyMsg": {
     "message": "Privatumo politika"
   },
@@ -569,17 +517,8 @@
   "privateNetwork": {
     "message": "Privatus tinklas"
   },
-  "queue": {
-    "message": "Eilė"
-  },
   "readdToken": {
     "message": "Šį žetoną galite bet kada galite įtraukti ir vėl, tiesiog savo paskyros parinkčių meniu nueikite  į „Įtraukti žetoną“."
-  },
-  "recents": {
-    "message": "Naujausi"
-  },
-  "recipientAddressPlaceholder": {
-    "message": "Ieška, viešieji adresai (0x) arba ENS"
   },
   "reject": {
     "message": "Atmesti"
@@ -639,12 +578,6 @@
   "search": {
     "message": "Ieškoti"
   },
-  "searchResults": {
-    "message": "Paieškos rezultatai"
-  },
-  "searchTokens": {
-    "message": "Ieškoti žetonų"
-  },
   "securityAndPrivacy": {
     "message": "Sauga ir privatumas"
   },
@@ -666,17 +599,8 @@
   "send": {
     "message": "Siųsti"
   },
-  "sendTokens": {
-    "message": "Siųsti žetonus"
-  },
   "settings": {
     "message": "Nustatymai"
-  },
-  "showAdvancedGasInline": {
-    "message": "Išplėstiniai dujų valdikliai"
-  },
-  "showAdvancedGasInlineDescription": {
-    "message": "Pasirinkite tai, kad būtų rodoma dujų kaina, ir ribokite valdymo elementus tiesiogiai siuntimo ir patvirtinimo ekranuose."
   },
   "showFiatConversionInTestnets": {
     "message": "Rodyti keitimą „Testnet“"
@@ -689,9 +613,6 @@
   },
   "showHexDataDescription": {
     "message": "Pasirinkite tai, kad siuntimo ekrane būtų rodomas šešioliktainių duomenų laukas"
-  },
-  "showPrivateKeys": {
-    "message": "Rodyti asmeninius raktus"
   },
   "sigRequest": {
     "message": "Parašo užklausa"
@@ -740,27 +661,6 @@
   },
   "symbolBetweenZeroTwelve": {
     "message": "Simbolis turi būti ne ilgesnis nei 11 simbolių."
-  },
-  "syncWithMobile": {
-    "message": "Sinchronizuoti su mobiliuoju"
-  },
-  "syncWithMobileBeCareful": {
-    "message": "Pasirūpinkite, kad jums nuskaitant šį kodą niekas nežiūrėtų į jūsų ekraną."
-  },
-  "syncWithMobileComplete": {
-    "message": "Jūsų duomenys sėkmingai sinchronizuoti. Mėgaukitės „MetaMask“ mobiliąja programa! "
-  },
-  "syncWithMobileDesc": {
-    "message": "Galite sinchronizuoti paskyrą ir informaciją su savo mobiliuoju įrenginiu. Atverkite „MetaMask“ mobiliąją programą, eikite į „Nuostatos“ ir palieskite „Sinchronizuoti iš naršyklės plėtinio“"
-  },
-  "syncWithMobileDescNewUsers": {
-    "message": "Jeigu „MetaMask“ mobiliąją programą atveriate tik pirmą kartą, tiesiog sekite veiksmus telefone."
-  },
-  "syncWithMobileScanThisCode": {
-    "message": "Nuskaitykite šį kodą su savo „MetaMask“ mobiliąja programa"
-  },
-  "syncWithMobileTitle": {
-    "message": "Sinchronizuoti su mobiliuoju"
   },
   "terms": {
     "message": "Naudojimo sąlygos"
@@ -828,21 +728,11 @@
   "transfer": {
     "message": "Pervesti"
   },
-  "transferBetweenAccounts": {
-    "message": "Perkėlimas tarp savo paskyrų"
-  },
   "transferFrom": {
     "message": "Pervedimas iš"
   },
-  "troubleTokenBalances": {
-    "message": "Susidurta su sunkumais įkeliant jūsų žetonų likučius. Galite juos peržiūrėti ",
-    "description": "Followed by a link (here) to view token balances"
-  },
   "tryAgain": {
     "message": "Bandyti dar kartą"
-  },
-  "typePassword": {
-    "message": "Įveskite savo „MetaMask“ slaptažodį"
   },
   "unapproved": {
     "message": "Nepatvirtinta"
@@ -852,12 +742,6 @@
   },
   "unknown": {
     "message": "Nežinoma"
-  },
-  "unknownCameraError": {
-    "message": "Kreipiantis į jūsų kamerą iškilo problema. Bandykite dar kartą..."
-  },
-  "unknownCameraErrorTitle": {
-    "message": "Vaje! Kažkas negerai..."
   },
   "unknownNetwork": {
     "message": "Nežinomas privatusis tinklas"
@@ -870,9 +754,6 @@
   },
   "unlockMessage": {
     "message": "Laukiančios decentralizuotos svetainės"
-  },
-  "updatedWithDate": {
-    "message": "Atnaujinta $1"
   },
   "urlErrorMsg": {
     "message": "URI reikia atitinkamo HTTP/HTTPS priešdėlio."

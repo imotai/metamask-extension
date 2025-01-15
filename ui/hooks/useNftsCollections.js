@@ -2,23 +2,29 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { isEqual } from 'lodash';
 import { getNfts, getNftContracts } from '../ducks/metamask/metamask';
-import { getCurrentChainId, getSelectedAddress } from '../selectors';
+import { getCurrentChainId, getSelectedInternalAccount } from '../selectors';
 import { usePrevious } from './usePrevious';
+import { useI18nContext } from './useI18nContext';
 
 export function useNftsCollections() {
+  const t = useI18nContext();
+  const previouslyOwnedText = t('nftsPreviouslyOwned');
+  const unknownCollectionText = t('unknownCollection');
+
   const [collections, setCollections] = useState({});
   const [previouslyOwnedCollection, setPreviouslyOwnedCollection] = useState({
-    collectionName: 'Previously Owned',
+    collectionName: previouslyOwnedText,
     nfts: [],
   });
   const nfts = useSelector(getNfts);
   const [nftsLoading, setNftsLoading] = useState(() => nfts?.length >= 0);
-  const selectedAddress = useSelector(getSelectedAddress);
+  const { address: selectedAddress } = useSelector(getSelectedInternalAccount);
   const chainId = useSelector(getCurrentChainId);
   const nftContracts = useSelector(getNftContracts);
   const prevNfts = usePrevious(nfts);
   const prevChainId = usePrevious(chainId);
   const prevSelectedAddress = usePrevious(selectedAddress);
+
   useEffect(() => {
     const getCollections = () => {
       setNftsLoading(true);
@@ -27,7 +33,7 @@ export function useNftsCollections() {
       }
       const newCollections = {};
       const newPreviouslyOwnedCollections = {
-        collectionName: 'Previously Owned',
+        collectionName: previouslyOwnedText,
         nfts: [],
       };
 
@@ -41,7 +47,7 @@ export function useNftsCollections() {
             ({ address }) => address === nft.address,
           );
           newCollections[nft.address] = {
-            collectionName: collectionContract?.name || nft.name,
+            collectionName: collectionContract?.name || unknownCollectionText,
             collectionImage: collectionContract?.logo || nft.image,
             nfts: [nft],
           };
@@ -68,6 +74,8 @@ export function useNftsCollections() {
     prevChainId,
     selectedAddress,
     prevSelectedAddress,
+    previouslyOwnedText,
+    unknownCollectionText,
   ]);
 
   return { nftsLoading, collections, previouslyOwnedCollection };

@@ -1,7 +1,8 @@
+@use "design-system";
+
 .choose-account-list {
   display: flex;
   flex-direction: column;
-  width: 100%;
   align-items: center;
   overflow-y: auto;
 
@@ -9,9 +10,8 @@
   &__header--multiple-items {
     display: flex;
     flex: 0;
-    margin-top: 36px;
     width: 100%;
-    padding-inline-start: 15px;
+    padding-inline-start: 16px;
     padding-inline-end: 17px;
   }
 
@@ -25,7 +25,6 @@
 
   &__select-all {
     display: flex;
-    margin-inline-start: 16px;
     align-items: center;
   }
 
@@ -34,6 +33,7 @@
   }
 
   &__wrapper {
+    margin-top: 8px;
     display: flex;
     overflow: hidden;
     width: 100%;
@@ -62,7 +62,7 @@
     }
 
     &:hover {
-      background: var(--color-background-alternative);
+      background: var(--color-primary-muted);
       cursor: pointer;
     }
 
@@ -73,23 +73,8 @@
       min-width: 0;
     }
 
-    &__label {
-      @include H6;
-
-      color: var(--color-text-default);
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-
-    &__balance {
-      @include H7;
-
-      color: var(--color-text-default);
-    }
-
     &__last-connected {
-      @include H8;
+      @include design-system.H8;
 
       display: flex;
       flex-direction: column;
@@ -113,29 +98,11 @@
     }
   }
 
-  .fa-info-circle {
-    color: var(--color-icon-muted);
+  .info-circle {
     cursor: pointer;
-    margin-inline-start: 8px;
-    font-size: 0.9rem;
   }
 
-  .fa-info-circle:hover {
+  .info-circle:hover {
     color: var(--color-icon-default);
-  }
-
-  &__text,
-  &__text-blue,
-  &__text-grey {
-    @include H6;
-  }
-
-  &__text-blue {
-    color: var(--color-primary-default);
-    cursor: pointer;
-  }
-
-  &__text-grey {
-    color: var(--color-text-default);
   }
 }

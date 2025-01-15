@@ -1,14 +1,20 @@
 const { promises: fs } = require('fs');
 const path = require('path');
+const childProcess = require('child_process');
 const { mergeWith, cloneDeep } = require('lodash');
+const { isManifestV3 } = require('../../shared/modules/mv3.utils');
 
-const baseManifest = process.env.ENABLE_MV3
+const baseManifest = isManifestV3
   ? require('../../app/manifest/v3/_base.json')
   : require('../../app/manifest/v2/_base.json');
-const { BuildType } = require('../lib/build-type');
+const baradDurManifest = isManifestV3
+  ? require('../../app/manifest/v3/_barad_dur.json')
+  : require('../../app/manifest/v2/_barad_dur.json');
+const { loadBuildTypesConfig } = require('../lib/build-type');
 
-const { TASKS } = require('./constants');
+const { TASKS, ENVIRONMENT } = require('./constants');
 const { createTask, composeSeries } = require('./task');
+const { getEnvironment, getBuildName } = require('./utils');
 
 module.exports = createManifestTasks;
 
@@ -16,6 +22,9 @@ function createManifestTasks({
   browserPlatforms,
   browserVersionMap,
   buildType,
+  applyLavaMoat,
+  shouldIncludeSnow,
+  entryTask,
 }) {
   // merge base manifest with per-platform manifests
   const prepPlatforms = async () => {
@@ -27,17 +36,21 @@ function createManifestTasks({
             '..',
             '..',
             'app',
-            process.env.ENABLE_MV3 ? 'manifest/v3' : 'manifest/v2',
+            isManifestV3 ? 'manifest/v3' : 'manifest/v2',
             `${platform}.json`,
           ),
         );
         const result = mergeWith(
           cloneDeep(baseManifest),
+          process.env.BARAD_DUR ? cloneDeep(baradDurManifest) : {},
           platformModifications,
           browserVersionMap[platform],
           await getBuildModifications(buildType, platform),
           customArrayMerge,
         );
+
+        modifyNameAndDescForNonProd(result);
+
         const dir = path.join('.', 'dist', platform);
         await fs.mkdir(dir, { recursive: true });
         await writeJson(result, path.join(dir, 'manifest.json'));
@@ -56,6 +69,7 @@ function createManifestTasks({
       ...manifest.permissions,
       'webRequestBlocking',
       'http://localhost/*',
+      'tabs', // test builds need tabs permission for switchToWindowWithTitle
     ];
   });
 
@@ -65,6 +79,7 @@ function createManifestTasks({
       ...manifest.permissions,
       'webRequestBlocking',
       'http://localhost/*',
+      'tabs', // test builds need tabs permission for switchToWindowWithTitle
     ];
   });
 
@@ -101,10 +116,37 @@ function createManifestTasks({
           );
           const manifest = await readJson(manifestPath);
           transformFn(manifest);
+
           await writeJson(manifest, manifestPath);
         }),
       );
     };
+  }
+
+  // For non-production builds only, modify the extension's name and description
+  function modifyNameAndDescForNonProd(manifest) {
+    const environment = getEnvironment({ buildTarget: entryTask });
+
+    if (environment === ENVIRONMENT.PRODUCTION) {
+      return;
+    }
+
+    // Get the first 8 characters of the git revision id
+    const gitRevisionStr = childProcess
+      .execSync('git rev-parse HEAD')
+      .toString()
+      .trim()
+      .substring(0, 8);
+
+    manifest.name = getBuildName({
+      environment,
+      buildType,
+      applyLavaMoat,
+      shouldIncludeSnow,
+      isManifestV3,
+    });
+
+    manifest.description = `${environment} build from git id: ${gitRevisionStr}`;
   }
 
   // helper for merging obj value
@@ -130,25 +172,24 @@ async function writeJson(obj, file) {
  * Get manifest modifications for the given build type, including modifications specific to the
  * given platform.
  *
- * @param {BuildType} buildType - The build type.
+ * @param {string} buildType - The build type.
  * @param {string} platform - The platform (i.e. the browser).
- * @returns {object} The build modificantions for the given build type and platform.
+ * @returns {object} The build modifications for the given build type and platform.
  */
 async function getBuildModifications(buildType, platform) {
-  if (!Object.values(BuildType).includes(buildType)) {
+  const buildConfig = loadBuildTypesConfig();
+  if (!(buildType in buildConfig.buildTypes)) {
     throw new Error(`Invalid build type: ${buildType}`);
-  } else if (buildType === BuildType.main) {
+  }
+
+  const overridesPath = buildConfig.buildTypes[buildType].manifestOverrides;
+  if (!overridesPath) {
     return {};
   }
 
   const builtTypeManifestDirectoryPath = path.resolve(
-    __dirname,
-    '..',
-    '..',
-    'app',
-    'build-types',
-    buildType,
-    'manifest',
+    process.cwd(),
+    overridesPath,
   );
 
   const baseBuildTypeModificationsPath = path.join(

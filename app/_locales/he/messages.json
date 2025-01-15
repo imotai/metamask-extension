@@ -75,9 +75,6 @@
   "asset": {
     "message": "נכס"
   },
-  "attemptingConnect": {
-    "message": "מנסה להתחבר לבלוקצ'יין."
-  },
   "attributions": {
     "message": "תכונות"
   },
@@ -92,9 +89,6 @@
   },
   "back": {
     "message": "חזור"
-  },
-  "backToAll": {
-    "message": "חזרה אל 'הכל'"
   },
   "backupApprovalInfo": {
     "message": "קוד סודי זה נדרש כדי לשחזר את הארנק שלך במקרה שתאבד/י את מכשירך, תשכח/י את הססמה, תצטרכ/י להתקין מחדש את MetaMask או שתרצה/י לגשת לארנק שלך במכשיר אחר."
@@ -154,14 +148,14 @@
   "connect": {
     "message": "התחברות"
   },
-  "connectHardwareWallet": {
-    "message": "חבר ארנק חומרה"
-  },
   "connectingTo": {
     "message": "מתחבר ל- $1 "
   },
   "connectingToGoerli": {
     "message": "מתחבר ל-Goerli Test Network"
+  },
+  "connectingToLineaGoerli": {
+    "message": "מתחבר ל-Linea Goerli Test Network"
   },
   "connectingToMainnet": {
     "message": "מתחבר לרשת אתריום הראשית"
@@ -178,9 +172,6 @@
   "copyAddress": {
     "message": "העתק כתובת ללוח"
   },
-  "copyPrivateKey": {
-    "message": "זה המפתח הפרטי שלך (נא להקיש כדי להעתיק)"
-  },
   "copyToClipboard": {
     "message": "העתק ללוח"
   },
@@ -189,9 +180,6 @@
   },
   "create": {
     "message": "צור"
-  },
-  "createAccount": {
-    "message": "פתיחת חשבון"
   },
   "createPassword": {
     "message": "יצירת ססמה"
@@ -217,15 +205,6 @@
   "delete": {
     "message": "מחיקה"
   },
-  "deleteAccount": {
-    "message": "מחק חשבון"
-  },
-  "deleteNetwork": {
-    "message": "למחוק את הרשת?"
-  },
-  "deleteNetworkDescription": {
-    "message": "הנך בטוח/ה שברצונך למחוק רשת זו?"
-  },
   "details": {
     "message": "פרטים"
   },
@@ -247,15 +226,6 @@
   "editContact": {
     "message": "ערוך איש קשר"
   },
-  "ensNotFoundOnCurrentNetwork": {
-    "message": "שם ENS לא נמצא ברשת הנוכחית. נסה/י לעבור לרשת אתריום הראשית."
-  },
-  "ensRegistrationError": {
-    "message": "שגיאה ברישום שם ENS"
-  },
-  "enterPassword": {
-    "message": "יש להזין ססמה"
-  },
   "enterPasswordContinue": {
     "message": "יש להזין ססמה כדי להמשיך"
   },
@@ -268,18 +238,11 @@
   "expandView": {
     "message": "הרחב תצוגה"
   },
-  "exportPrivateKey": {
-    "message": "יצא/י מפתח פרטי"
-  },
   "failed": {
     "message": "נכשל"
   },
   "fast": {
     "message": "מהיר"
-  },
-  "fiat": {
-    "message": "פיאט",
-    "description": "Exchange type"
   },
   "fileImportFail": {
     "message": "ייבוא הקובץ לא עובד? לחצ/י כאן!",
@@ -381,12 +344,6 @@
   "invalidAddressRecipient": {
     "message": "כתובת הנמען אינה חוקית"
   },
-  "invalidAddressRecipientNotEthNetwork": {
-    "message": "לא רשת ETH, מוגדר במצב אותיות קטנות"
-  },
-  "invalidBlockExplorerURL": {
-    "message": "כתובת URL לא חוקית של Block Explorer"
-  },
   "invalidRPC": {
     "message": "כתובת URL לא חוקית של RPC"
   },
@@ -411,6 +368,9 @@
   },
   "likeToImportTokens": {
     "message": "האם ברצונך להוסיף טוקנים אלה?"
+  },
+  "lineaGoerli": {
+    "message": "רשת בדיקה Linea Goerli"
   },
   "links": {
     "message": "קישורים"
@@ -444,9 +404,6 @@
   },
   "mustSelectOne": {
     "message": "חובה לבחור לפחות אסימון אחד."
-  },
-  "myAccounts": {
-    "message": "החשבונות שלי"
   },
   "needImportFile": {
     "message": "יש לבחור קובץ לייצוא.",
@@ -482,9 +439,6 @@
   },
   "next": {
     "message": "הבא"
-  },
-  "noAddressForName": {
-    "message": "לא הוגדרה כתובת עבור שם זה."
   },
   "noConversionRateAvailable": {
     "message": "אין שער המרה זמין"
@@ -547,12 +501,6 @@
   "prev": {
     "message": "הקודם"
   },
-  "primaryCurrencySetting": {
-    "message": "מטבע ראשי"
-  },
-  "primaryCurrencySettingDescription": {
-    "message": "בחר/י 'מקומי' כדי לתעדף הצגת ערכים במטבע המקומי של הצ'יין (למשל ETH). בחר/י פיאט כדי לתעדף הצגת ערכים במטבע הפיאט שבחרת."
-  },
   "privacyMsg": {
     "message": "מדיניות הפרטיות"
   },
@@ -566,17 +514,8 @@
   "privateNetwork": {
     "message": "רשת פרטית"
   },
-  "queue": {
-    "message": "תור"
-  },
   "readdToken": {
     "message": "באפשרותך להוסיף טוקן זה בחזרה בעתיד על ידי מעבר אל \"הוסף טוקן\" בתפריט אפשרויות החשבונות שלך."
-  },
-  "recents": {
-    "message": "אחרונים"
-  },
-  "recipientAddressPlaceholder": {
-    "message": "חיפוש, כתובת ציבורית (0x), או ENS"
   },
   "reject": {
     "message": "דחה"
@@ -636,12 +575,6 @@
   "search": {
     "message": "חפש"
   },
-  "searchResults": {
-    "message": "תוצאות חיפוש"
-  },
-  "searchTokens": {
-    "message": "חיפוש טוקנים"
-  },
   "securityAndPrivacy": {
     "message": "אבטחה ופרטיות"
   },
@@ -663,17 +596,8 @@
   "send": {
     "message": "שלח"
   },
-  "sendTokens": {
-    "message": "שלח טוקנים"
-  },
   "settings": {
     "message": "הגדרות"
-  },
-  "showAdvancedGasInline": {
-    "message": "אמצעי שליטה מתקדמים בדלק"
-  },
-  "showAdvancedGasInlineDescription": {
-    "message": "בחר/י באפשרות זו כדי להציג אמצעי שליטה במחיר הדלק וההגבלה (limit) ישירות במסכי השליחה והאישור."
   },
   "showFiatConversionInTestnets": {
     "message": "הצג המרה -Testnets"
@@ -686,9 +610,6 @@
   },
   "showHexDataDescription": {
     "message": "בחר/י בזה כדי להציג את שדה הנתונים ההקסדצימאלים על מסך השליחה"
-  },
-  "showPrivateKeys": {
-    "message": "הצג מפתחות פרטיים"
   },
   "sigRequest": {
     "message": "בקשת חתימה"
@@ -737,27 +658,6 @@
   },
   "symbolBetweenZeroTwelve": {
     "message": "הסמל חייב להיות 11 תווים או פחות."
-  },
-  "syncWithMobile": {
-    "message": "סנכרן עם הנייד"
-  },
-  "syncWithMobileBeCareful": {
-    "message": "ודא/י כי איש אינו מסתכל על המסך שלך בזמן סריקת קוד זה"
-  },
-  "syncWithMobileComplete": {
-    "message": "הנתונים שלך סונכרנו בהצלחה. תיהנה/י מאפליקציית MetaMask לטלפונים ניידים! "
-  },
-  "syncWithMobileDesc": {
-    "message": "באפשרותך לסנכרן את החשבונות והמידע שלך עם המכשיר הנייד שלך. יש לפתוח את האפליקציה לנייד של MetaMask, לעבור אל \"הגדרות\" וללחוץ על \"סנכרון מהרחבה לדפדפן\""
-  },
-  "syncWithMobileDescNewUsers": {
-    "message": "אם את/ה פותח/ת  את אפליקציית MetaMask Mobile בפעם הראשונה, פשוט בצע/י את השלבים בטלפון שלך."
-  },
-  "syncWithMobileScanThisCode": {
-    "message": "יש לסרוק קוד QR זה באמצעות אפליקציית MetaMask לטלפון נייד"
-  },
-  "syncWithMobileTitle": {
-    "message": "סנכרן עם הנייד"
   },
   "terms": {
     "message": "תנאי שימוש"
@@ -825,21 +725,11 @@
   "transfer": {
     "message": "העברה"
   },
-  "transferBetweenAccounts": {
-    "message": "בצע העברה בין חשבונותיי"
-  },
   "transferFrom": {
     "message": "העברה מ-"
   },
-  "troubleTokenBalances": {
-    "message": "לא הצלחנו לטעון את יתרות הטוקנים שלך. באפשרותך להציג אותן",
-    "description": "Followed by a link (here) to view token balances"
-  },
   "tryAgain": {
     "message": "ניסיון חוזר"
-  },
-  "typePassword": {
-    "message": "נא להקליד את סיסמת MetaMask שלך"
   },
   "unapproved": {
     "message": "לא אושר"
@@ -849,12 +739,6 @@
   },
   "unknown": {
     "message": "לא ידוע"
-  },
-  "unknownCameraError": {
-    "message": "אירעה שגיאה במהלך הניסיון לקבל גישה למצלמה שלך. נא לנסות שוב..."
-  },
-  "unknownCameraErrorTitle": {
-    "message": "אופס! משהו השתבש...."
   },
   "unknownNetwork": {
     "message": "רשת פרטית לא ידועה"
@@ -867,9 +751,6 @@
   },
   "unlockMessage": {
     "message": "הרשת המבוזרת מחכה"
-  },
-  "updatedWithDate": {
-    "message": "עודכן $1"
   },
   "urlErrorMsg": {
     "message": "כתובות URI דורשות את קידומת HTTP/HTTPS המתאימה."
